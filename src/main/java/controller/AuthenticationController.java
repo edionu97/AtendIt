@@ -1,5 +1,6 @@
 package controller;
 
+import messages.ErrorMessage;
 import messages.request.AuthenticationMessage;
 import messages.response.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.AuthService;
 import service.interfaces.IAuthService;
 
 @RestController
@@ -25,7 +25,12 @@ public class AuthenticationController {
     public ResponseEntity<?> login(@RequestBody AuthenticationMessage authMessage){
 
         if(authMessage == null || authMessage.getPassword() == null || authMessage.getUsername() == null){
-            return new ResponseEntity<>("Usern or Passwd fields are missing!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ErrorMessage(
+                            HttpStatus.BAD_REQUEST, "Usern or Passwd fields are missing!"
+                    ),
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         AuthenticationResponse response = service.login(
@@ -40,7 +45,12 @@ public class AuthenticationController {
     public ResponseEntity<?> register(@RequestBody AuthenticationMessage message){
 
         if(message == null || message.getPassword() == null || message.getUsername() == null){
-            return new ResponseEntity<>("Usern or Passwd fields are missing!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ErrorMessage(
+                            HttpStatus.BAD_REQUEST, "Usern or Passwd fields are missing!"
+                    ),
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         AuthenticationResponse response = service.createAccount(message);
