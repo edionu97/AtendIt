@@ -35,7 +35,7 @@ public class User {
     public User(String password, String username) {
         this.password = password;
         this.username = username;
-        this.role = UserRoles.ADMIN;
+        this.role = UserRoles.TEACHER;
     }
 
     public int getUserId(){
