@@ -39,7 +39,6 @@ public class HibernateUtils {
                 .buildSessionFactory();
     }
 
-    
     private  SessionFactory sessionFactory;
     private static volatile HibernateUtils persistenceUtils = null;
 }
