@@ -1,4 +1,4 @@
-package messages.response;
+package application.messages.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;

@@ -1,8 +1,8 @@
-package model;
+package application.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import utils.model.UserRoles;
+import application.utils.model.UserRoles;
 import javax.persistence.*;
 import java.io.Serializable;
 

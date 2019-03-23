@@ -1,7 +1,7 @@
-package config;
+package application.config;
 
-import database.implementation.UserRepoImpl;
-import database.interfaces.IUserRepo;
+import application.database.implementation.UserRepoImpl;
+import application.database.interfaces.IUserRepo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sun.misc.BASE64Encoder;

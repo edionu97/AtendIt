@@ -1,7 +1,7 @@
-package service.interfaces;
+package application.service.interfaces;
 
-import messages.request.AuthenticationMessage;
-import messages.response.AuthenticationResponse;
+import application.messages.request.AuthenticationMessage;
+import application.messages.response.AuthenticationResponse;
 
 public interface  IAuthService {
 

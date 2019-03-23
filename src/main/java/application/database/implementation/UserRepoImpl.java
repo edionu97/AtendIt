@@ -1,11 +1,11 @@
-package database.implementation;
+package application.database.implementation;
 
-import database.interfaces.IUserRepo;
-import model.User;
+import application.database.interfaces.IUserRepo;
+import application.model.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import utils.exceptions.UserExeception;
-import utils.persistence.HibernateUtils;
+import application.utils.exceptions.UserExeception;
+import application.utils.persistence.HibernateUtils;
 
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;

@@ -1,7 +1,7 @@
-package database.interfaces;
+package application.database.interfaces;
 
-import model.User;
-import utils.exceptions.UserExeception;
+import application.model.User;
+import application.utils.exceptions.UserExeception;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,7 @@ public interface IUserRepo {
      * Creates an account for a new user
      * @param username: string
      * @param password: string
-     * @throws UserExeception: if in database exists an user with same username
+     * @throws UserExeception: if in application.database exists an user with same username
      */
     void createAccount(String username, String password) throws UserExeception;
 
@@ -32,7 +32,7 @@ public interface IUserRepo {
     Optional<User> findUserByUsername(String username);
 
     /**
-     * @return A list with all users from database
+     * @return A list with all users from application.database
      */
     List<User> getAllUsers();
 }

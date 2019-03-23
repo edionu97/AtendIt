@@ -1,21 +1,20 @@
-package service;
+package application.service;
 
 
-import database.interfaces.IUserRepo;
-import messages.request.AuthenticationMessage;
-import messages.response.AuthenticationResponse;
-import model.User;
+import application.database.interfaces.IUserRepo;
+import application.messages.request.AuthenticationMessage;
+import application.messages.response.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import service.interfaces.IAuthService;
+import application.service.interfaces.IAuthService;
 import sun.misc.BASE64Encoder;
-import utils.exceptions.UserExeception;
+import application.utils.exceptions.UserExeception;
 
 
 @Component
-@ComponentScan(basePackages = "config")
+@ComponentScan(basePackages = "application.config")
 public class AuthService implements IAuthService {
 
     @Autowired

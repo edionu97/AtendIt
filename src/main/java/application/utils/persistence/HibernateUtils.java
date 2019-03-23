@@ -1,13 +1,13 @@
-package utils.persistence;
+package application.utils.persistence;
 
-import model.User;
+import application.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateUtils {
 
     /**
-     * Gets the an instance of hibernate utils class
+     * Gets the an instance of hibernate application.utils class
      * @return an instance
      */
     public static HibernateUtils getInstance(){

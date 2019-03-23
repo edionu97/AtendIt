@@ -1,18 +1,18 @@
-package controller;
+package application.controller;
 
-import messages.ErrorMessage;
-import messages.request.AuthenticationMessage;
-import messages.response.AuthenticationResponse;
+import application.messages.ErrorMessage;
+import application.messages.request.AuthenticationMessage;
+import application.messages.response.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.interfaces.IAuthService;
+import application.service.interfaces.IAuthService;
 
 @RestController
 @RequestMapping("/auth")
-@ComponentScan(basePackages = "service")
+@ComponentScan(basePackages = "application.service")
 public class AuthenticationController {
 
     @Autowired

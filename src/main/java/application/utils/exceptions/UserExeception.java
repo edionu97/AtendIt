@@ -1,4 +1,4 @@
-package utils.exceptions;
+package application.utils.exceptions;
 
 public class UserExeception extends  Exception {
 
