@@ -7,6 +7,7 @@ import org.hibernate.Transaction;
 import utils.exceptions.UserExeception;
 import utils.persistence.HibernateUtils;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -59,6 +60,7 @@ public class UserRepoImpl implements IUserRepo {
                     )
             );
 
+
             return !session.createQuery(query).getResultList().isEmpty();
         }
     }
@@ -80,7 +82,10 @@ public class UserRepoImpl implements IUserRepo {
             );
 
             return Optional.ofNullable(session.createQuery(query).getSingleResult());
+        }catch (NoResultException ignored){
         }
+
+        return Optional.empty();
     }
 
     @Override

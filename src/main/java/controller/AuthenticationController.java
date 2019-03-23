@@ -36,6 +36,17 @@ public class AuthenticationController {
         return new ResponseEntity<>(response, response.getStatus());
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody AuthenticationMessage message){
+
+        if(message == null || message.getPassword() == null || message.getUsername() == null){
+            return new ResponseEntity<>("Usern or Passwd fields are missing!", HttpStatus.BAD_REQUEST);
+        }
+
+        AuthenticationResponse response = service.createAccount(message);
+        return new ResponseEntity<>(response, response.getStatus());
+    }
+
 
     private IAuthService service;
 }

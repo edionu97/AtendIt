@@ -7,6 +7,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"username"}
+        )
+)
 public class User implements Serializable {
 
     /**
@@ -22,7 +27,7 @@ public class User implements Serializable {
      * @param username:  string representing the user's username
      * @param role:  enum represents the user's role
      */
-    public User(String password, String username, UserRoles role) {
+    public User(String username, String password, UserRoles role) {
         this.password = password;
         this.username = username;
         this.role = role;
@@ -33,7 +38,7 @@ public class User implements Serializable {
      * @param password: string representing user's password
      * @param username: string representing user's username
      */
-    public User(String password, String username) {
+    public User(String username, String password) {
         this.password = password;
         this.username = username;
         this.role = UserRoles.TEACHER;
