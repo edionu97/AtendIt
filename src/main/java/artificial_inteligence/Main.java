@@ -9,9 +9,10 @@ import artificial_inteligence.utils.xmls.Source;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.io.File;
+import java.util.Arrays;
 
 public class Main {
-    public static void main(String ...args) throws  Exception{
+    public static void main(String... args) throws Exception {
 
         File file = new File("C:\\Users\\Eduard\\Desktop\\test.xml");
 
@@ -26,18 +27,24 @@ public class Main {
         Marshaller marshaller = context.createMarshaller();
 
         Annotation annotation = new Annotation(
-            new Size(100,100,3),
-            new Object(
-                    "Face",
-                    new BndBox(
-                            10,10,10,10
-                    )
-            ),
+                new Size(100, 100, 3),
+                Arrays.asList(new Object(
+                                "Face",
+                                new BndBox(
+                                        10, 10, 10, 10
+                                )
+                        ),
+                        new Object(
+                                "Face",
+                                new BndBox(
+                                        10, 10, 10, 10
+                                )
+                        )),
                 "Folder",
                 "Filename",
                 "Path"
         );
-        
+
 
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);

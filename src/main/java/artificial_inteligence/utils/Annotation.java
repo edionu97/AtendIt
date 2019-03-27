@@ -7,12 +7,17 @@ import artificial_inteligence.utils.xmls.Source;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.List;
 
 @XmlRootElement
-@XmlType(propOrder={"folder", "filename", "path", "source", "size", "segmented", "object"})
+@XmlType(propOrder = {"folder", "filename", "path", "source", "size", "segmented", "object"})
 public class Annotation {
 
-    public Annotation(Size size, Object object, String folder, String filename, String path) {
+    public Annotation(
+            Size size,
+            List<Object> object,
+            String folder,
+            String filename, String path) {
         this.size = size;
         this.object = object;
         this.folder = folder;
@@ -23,9 +28,8 @@ public class Annotation {
     }
 
     public Annotation(
-            Source source, Size size, Object object,
-            String folder, String filename, String path,
-            int segmented) {
+            Source source, Size size, List<Object> object,
+            String folder, String filename, String path, int segmented) {
         this.source = source;
         this.size = size;
         this.object = object;
@@ -56,12 +60,12 @@ public class Annotation {
         this.size = size;
     }
 
-    public Object getObject() {
+    public List<Object> getObject() {
         return object;
     }
 
     @XmlElement
-    public void setObject(Object object) {
+    public void setObject(List<Object> object) {
         this.object = object;
     }
 
@@ -105,7 +109,7 @@ public class Annotation {
 
     private Size size;
 
-    private Object object;
+    private List<Object> object;
 
     private String folder;
 
