@@ -10,7 +10,15 @@ import javax.xml.bind.annotation.XmlType;
 import java.util.List;
 
 @XmlRootElement
-@XmlType(propOrder = {"folder", "filename", "path", "source", "size", "segmented", "object"})
+@XmlType(propOrder = {
+        "folder",
+        "filename",
+        "path",
+        "source",
+        "size",
+        "segmented",
+        "object"
+})
 public class Annotation {
 
     public Annotation(
@@ -42,17 +50,12 @@ public class Annotation {
     public Annotation() {
     }
 
-    public Source getSource() {
-        return source;
-    }
+
+    //Create the document elements
 
     @XmlElement
     public void setSource(Source source) {
         this.source = source;
-    }
-
-    public Size getSize() {
-        return size;
     }
 
     @XmlElement
@@ -60,35 +63,21 @@ public class Annotation {
         this.size = size;
     }
 
-    public List<Object> getObject() {
-        return object;
-    }
-
     @XmlElement
     public void setObject(List<Object> object) {
         this.object = object;
     }
 
-    public String getFolder() {
-        return folder;
-    }
 
     @XmlElement
     public void setFolder(String folder) {
         this.folder = folder;
     }
 
-    public String getFilename() {
-        return filename;
-    }
 
     @XmlElement
     public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     @XmlElement
@@ -96,26 +85,46 @@ public class Annotation {
         this.path = path;
     }
 
-    public int getSegmented() {
-        return segmented;
-    }
-
     @XmlElement
     public void setSegmented(int segmented) {
         this.segmented = segmented;
     }
 
+
+    public List<Object> getObject() {
+        return object;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public int getSegmented() {
+        return segmented;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getFolder() {
+        return folder;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    
     private Source source;
-
     private Size size;
-
     private List<Object> object;
-
     private String folder;
-
     private String filename;
-
     private String path;
-
     private int segmented;
 }

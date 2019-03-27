@@ -4,9 +4,21 @@ package artificial_inteligence.utils.xmls;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = {"xmin", "ymin", "xmax", "ymax"})
+@XmlType(propOrder = {
+        "xmin",
+        "ymin",
+        "xmax",
+        "ymax"
+})
 public class BndBox {
 
+    /**
+     * Constructs a new instance of this class
+     * @param xmin: the top corner of the bounding box
+     * @param xmax: the bottom corner of the bounding box
+     * @param ymin: the top corner high
+     * @param ymax: the bottom corner high
+     */
     public BndBox(int xmin, int xmax, int ymin, int ymax) {
         this.xmin = xmin;
         this.xmax = xmax;
@@ -18,17 +30,11 @@ public class BndBox {
 
     }
 
-    public int getXmin() {
-        return xmin;
-    }
+    /// Define the elements of the document
 
     @XmlElement
     public void setXmin(int xmin) {
         this.xmin = xmin;
-    }
-
-    public int getXmax() {
-        return xmax;
     }
 
     @XmlElement
@@ -36,17 +42,9 @@ public class BndBox {
         this.xmax = xmax;
     }
 
-    public int getYmin() {
-        return ymin;
-    }
-
     @XmlElement
     public void setYmin(int ymin) {
         this.ymin = ymin;
-    }
-
-    public int getYmax() {
-        return ymax;
     }
 
     @XmlElement
@@ -54,6 +52,24 @@ public class BndBox {
         this.ymax = ymax;
     }
 
+
+    public int getXmax() {
+        return xmax;
+    }
+
+    public int getYmin() {
+        return ymin;
+    }
+
+    public int getYmax() {
+        return ymax;
+    }
+
+    public int getXmin() {
+        return xmin;
+    }
+
+    /// Class fields
     private int xmin;
     private int xmax;
     private int ymin;

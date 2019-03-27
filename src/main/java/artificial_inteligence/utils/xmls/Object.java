@@ -4,9 +4,20 @@ package artificial_inteligence.utils.xmls;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = {"name", "pose", "truncated", "difficult", "bndbox"})
+@XmlType(propOrder = {
+        "name",
+        "pose",
+        "truncated",
+        "difficult",
+        "bndbox"
+})
 public class Object {
 
+    /**
+     * Creating the instance of the class
+     * @param name: the name of the bounding box
+     * @param bndbox: bounding box
+     */
     public Object(String name, BndBox bndbox) {
         this.name = name;
         this.difficult = 0;
@@ -27,43 +38,11 @@ public class Object {
 
     }
 
-    public String getPose() {
-        return pose;
-    }
-
-    public BndBox getBndbox() {
-        return bndbox;
-    }
+    /// Document elements
 
     @XmlElement
     public void setBndbox(BndBox bndbox) {
         this.bndbox = bndbox;
-    }
-
-    public void setPose(String pose) {
-        this.pose = pose;
-    }
-
-    public int getTruncated() {
-        return truncated;
-    }
-
-    @XmlElement
-    public void setTruncated(int truncated) {
-        this.truncated = truncated;
-    }
-
-    public int getDifficult() {
-        return difficult;
-    }
-
-    @XmlElement
-    public void setDifficult(int difficult) {
-        this.difficult = difficult;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @XmlElement
@@ -71,9 +50,49 @@ public class Object {
         this.name = name;
     }
 
+    @XmlElement
+    public void setDifficult(int difficult) {
+        this.difficult = difficult;
+    }
+
+    @XmlElement
+    public void setTruncated(int truncated) {
+        this.truncated = truncated;
+    }
+
+
+    public int getDifficult() {
+        return difficult;
+    }
+
+    public int getTruncated() {
+        return truncated;
+    }
+
+    public String getPose() {
+        return pose;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setPose(String pose) {
+        this.pose = pose;
+    }
+
+
+    public BndBox getBndbox() {
+        return bndbox;
+    }
+
+
+    /// Class fields
     private String pose;
     private String name;
+    private BndBox bndbox;
+
     private int truncated;
     private int difficult;
-    private BndBox bndbox;
 }

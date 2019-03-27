@@ -4,7 +4,9 @@ package artificial_inteligence.utils.xmls;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = {"database"})
+@XmlType(propOrder = {
+        "database"
+})
 public class Source {
 
     public Source(){
@@ -19,6 +21,7 @@ public class Source {
         return database;
     }
 
+    /// Document elements
     @XmlElement
     public void setDatabase(String database) {
         this.database = database;
