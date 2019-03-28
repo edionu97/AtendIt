@@ -1,4 +1,4 @@
-package artificial_inteligence.utils;
+package artificial_inteligence.utils.annotation;
 
 import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;

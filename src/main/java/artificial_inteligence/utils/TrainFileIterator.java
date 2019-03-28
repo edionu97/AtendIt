@@ -1,5 +1,8 @@
 package artificial_inteligence.utils;
 
+import artificial_inteligence.utils.annotation.Annotation;
+import artificial_inteligence.utils.annotation.IOldAnnotationParser;
+import artificial_inteligence.utils.annotation.OldAnnotationParser;
 import artificial_inteligence.utils.xmls.BndBox;
 import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;
@@ -86,54 +89,20 @@ public class TrainFileIterator {
             final double width, final double height,
             final String fileContent, final  File imagePath, final File annotationDir) throws Exception {
 
-        final int indexOfFile = fileContent.indexOf(imagePath.getName());
-        int x1, y1, w, h, blur, expression, illumination, invalid, occlusion, pose;
 
-        // Get the next line after the filename
-        Scanner reader = new Scanner(
-                new BufferedReader(
-                        new StringReader(
-                                fileContent.substring(indexOfFile + imagePath.getName().length() + 1)
-                        )
-                ));
-
-        int N = reader.nextInt();
-
-        List<Object> objects = new ArrayList<>();
-
-        for (int i = 0; i < N; ++i) {
-
-            x1 = reader.nextInt();y1 = reader.nextInt();
-            w = reader.nextInt();h = reader.nextInt();
-
-            // ignored
-            blur = reader.nextInt();expression = reader.nextInt();
-            illumination = reader.nextInt();invalid = reader.nextInt();
-            occlusion = reader.nextInt();pose = reader.nextInt();
-
-            objects.add(
-                    new Object(
-                            "Face",
-                            new BndBox(
-                                    x1, x1 + w, y1, y1 + h
-                            )
-                    )
-            );
-
-        }
+        IOldAnnotationParser parser = new OldAnnotationParser(
+                fileContent,
+                outputDirName,
+                (int)width, (int)height
+        );
 
 
         final String name =  imagePath.getName().replaceAll(".jpg", ".xml");
 
-        _writeAnnotationToFile(annotationDir.getPath() + "\\" + name, new Annotation(
-                new Size(
-                        (int)width, (int)height, 3
-                ),
-                objects,
-                outputDirName,
-                imagePath.getName(),
-                imagePath.getPath()
-        ));
+        _writeAnnotationToFile(
+                annotationDir.getPath() + "\\" + name,
+                parser.createAnnotation(imagePath)
+        );
     }
 
 
