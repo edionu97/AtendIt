@@ -33,4 +33,6 @@ dependencies {
     compile group: 'commons-codec', name: 'commons-codec', version: '1.12'
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
     compile group: 'javax.xmls.bind', name: 'jaxb-api', version: '2.4.0-b180830.0359'
+    // https://mvnrepository.com/artifact/org.openpnp/opencv
+    compile group: 'org.openpnp', name: 'opencv', version: '3.4.2-1'
 }

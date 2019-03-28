@@ -119,7 +119,7 @@ public class Annotation {
         return size;
     }
 
-    
+
     private Source source;
     private Size size;
     private List<Object> object;
