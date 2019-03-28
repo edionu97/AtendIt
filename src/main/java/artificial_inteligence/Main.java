@@ -1,6 +1,11 @@
 package artificial_inteligence;
 
+import artificial_inteligence.trainer.YOLOTrainer;
 import artificial_inteligence.utils.TrainFileIterator;
+import org.deeplearning4j.api.storage.StatsStorage;
+import org.deeplearning4j.ui.api.UIServer;
+import org.deeplearning4j.ui.storage.FileStatsStorage;
+import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import utils.ConstantsManager;
 
 import java.io.File;
@@ -12,6 +17,14 @@ public class Main {
 
         //annotateData();
 
+        final StatsStorage statsStorage = new InMemoryStatsStorage();
+        UIServer
+                .getInstance()
+                .attach(
+                        statsStorage
+                );
+
+        YOLOTrainer.getInstance().doTrain(statsStorage);
     }
 
     private  static  void annotateData() throws Exception{

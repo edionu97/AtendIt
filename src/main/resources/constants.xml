@@ -3,6 +3,6 @@
     <opencv>C:\opencv\build\java\x64\opencv_java400.dll</opencv>
     <image-folder-name>images</image-folder-name>
     <image-file-parent-path>E:\Dataset</image-file-parent-path>
-    <annotation-folder-path>E:\Dataset\annotation</annotation-folder-path>
+    <annotation-folder-path>E:\Dataset\annotations</annotation-folder-path>
     <old-annotation-folder-path>C:\Users\Eduard\Desktop\wider_face_train_bbx_gt.txt</old-annotation-folder-path>
 </constants>
