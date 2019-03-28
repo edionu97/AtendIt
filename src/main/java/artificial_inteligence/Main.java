@@ -10,6 +10,11 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
+        //annotateData();
+
+    }
+
+    private  static  void annotateData() throws Exception{
         final ConstantsManager manager = ConstantsManager.getInstance();
 
         System.load(
@@ -38,8 +43,6 @@ public class Main {
                 folderToProcess,
                 annotationDir
         );
-
     }
-
 
 }
