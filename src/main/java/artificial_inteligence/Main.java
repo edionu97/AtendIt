@@ -2,6 +2,7 @@ package artificial_inteligence;
 
 import artificial_inteligence.trainer.YOLOTrainer;
 import artificial_inteligence.utils.TrainFileIterator;
+import artificial_inteligence.video.FaceDetector;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.FileStatsStorage;
@@ -17,14 +18,16 @@ public class Main {
 
         //annotateData();
 
-        final StatsStorage statsStorage = new InMemoryStatsStorage();
-        UIServer
-                .getInstance()
-                .attach(
-                        statsStorage
-                );
+//        final StatsStorage statsStorage = new InMemoryStatsStorage();
+//        UIServer
+//                .getInstance()
+//                .attach(
+//                        statsStorage
+//                );
+//
+//        YOLOTrainer.getInstance().doTrain(statsStorage);
 
-        YOLOTrainer.getInstance().doTrain(statsStorage);
+        new FaceDetector().play();
     }
 
     private  static  void annotateData() throws Exception{

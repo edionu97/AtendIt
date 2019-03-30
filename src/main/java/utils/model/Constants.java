@@ -29,6 +29,10 @@ public class Constants {
         return oldAnnotationFolderPath;
     }
 
+    public String getModelPath() {
+        return modelPath;
+    }
+
     @XmlElement
     public void setOpencv(String opencv) {
         this.opencv = opencv;
@@ -60,7 +64,16 @@ public class Constants {
         this.oldAnnotationFolderPath = oldAnnotationFolderPath;
     }
 
+    @XmlElement(
+            name = "model-path"
+    )
+    public void setModelPath(String modelPath) {
+        this.modelPath = modelPath;
+    }
+
+
     private String opencv;
+    private String modelPath;
     private String imageFolderName;
     private String imageFileParentPath;
     private String annotationFolderPath;

@@ -21,7 +21,8 @@ import org.deeplearning4j.nn.transferlearning.FineTuneConfiguration;
 import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.ui.stats.StatsListener;
-import org.deeplearning4j.zoo.model.TinyYOLO;
+import org.deeplearning4j.util.ModelSerializer;
+import org.deeplearning4j.zoo.model.YOLO2;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
@@ -36,23 +37,30 @@ import java.util.Random;
 
 public class YOLOTrainer {
 
-    private static final int INPUT_WIDTH = 1024;
-    private static final int INPUT_HEIGHT = 1024;
+    private static final int INPUT_WIDTH = 416;
+    private static final int INPUT_HEIGHT = 416;
     private static final int CHANNELS = 3;
 
     private static final int GRID_WIDTH = 13;
     private static final int GRID_HEIGHT = 13;
     private static final int CLASSES_NUMBER = 1;
     private static final int BOXES_NUMBER = 5;
-    private static final double[][] PRIOR_BOXES = {{1.5, 1.5}, {2, 2}, {3, 3}, {3.5, 8}, {4, 9}};
+
+    private static final double[][] PRIOR_BOXES = {
+            {0.57273, 0.677385},
+            {1.87446, 2.06253},
+            {3.33843, 5.47434},
+            {7.88282, 3.52778},
+            {9.77052, 9.16828}
+    };
 
     private static final int BATCH_SIZE = 4;
     private static final int EPOCHS = 50;
-    private static final double LEARNIGN_RATE = 0.0001;
+    private static final double LEARNING_RATE = 0.00001;
     private static  final  int SEED = 1024;
 
-    private static final double LAMDBA_COORD = 1.0;
-    private static final double LAMDBA_NO_OBJECT = 0.5;
+    private static final double LAMBDA_COORD = 1.0;
+    private static final double LAMBDA_NO_OBJECT = 0.5;
 
 
 
@@ -61,6 +69,12 @@ public class YOLOTrainer {
         random = new Random(SEED);
     }
 
+
+    /**
+     * Performs training of the network
+     * @param statsStorage: the stats storage used to display network train stats
+     * @throws Exception: if something went wrong
+     */
     public void doTrain(final StatsStorage statsStorage) throws  Exception{
 
         final File file = new File(
@@ -75,12 +89,10 @@ public class YOLOTrainer {
         }
 
         Pair<InputSplit, InputSplit> trainTest = getTrainAndTestData(
-                file, .8, .2
+                file, 1, .0
         );
 
         InputSplit trainData = trainTest.getKey();
-        InputSplit testData = trainTest.getValue();
-
 
         ObjectDetectionRecordReader recordReaderTrain = new ObjectDetectionRecordReader(
                 INPUT_HEIGHT, INPUT_WIDTH, CHANNELS,
@@ -96,7 +108,7 @@ public class YOLOTrainer {
         );
         train.setPreProcessor(new ImagePreProcessingScaler(0, 1));
 
-        ComputationGraph pretrained = (ComputationGraph) TinyYOLO.builder().build().initPretrained();
+        ComputationGraph pretrained = (ComputationGraph) YOLO2.builder().build().initPretrained();
 
         INDArray priors = Nd4j.create(PRIOR_BOXES);
 
@@ -105,16 +117,17 @@ public class YOLOTrainer {
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .gradientNormalizationThreshold(1.0)
-                .updater(new RmsProp(LEARNIGN_RATE))
+                .updater(new RmsProp(LEARNING_RATE))
                 .activation(Activation.IDENTITY).miniBatch(true)
                 .trainingWorkspaceMode(WorkspaceMode.ENABLED)
                 .build();
 
+
         ComputationGraph model = new TransferLearning.GraphBuilder(pretrained)
                 .fineTuneConfiguration(fineTuneConf)
                 .setInputTypes(InputType.convolutional(INPUT_HEIGHT, INPUT_WIDTH, CHANNELS))
-                .removeVertexKeepConnections("conv2d_9")
-                .addLayer("convolution2d_9",
+                .removeVertexKeepConnections("conv2d_23")
+                .addLayer("convolution2d_23",
                         new ConvolutionLayer.Builder(1, 1)
                                 .nIn(1024)
                                 .nOut(BOXES_NUMBER * (5 + CLASSES_NUMBER))
@@ -123,17 +136,29 @@ public class YOLOTrainer {
                                 .weightInit(WeightInit.UNIFORM)
                                 .hasBias(false)
                                 .activation(Activation.IDENTITY)
-                                .build(), "leaky_re_lu_8")
+                                .build(), "leaky_re_lu_22")
+                .removeVertexKeepConnections("outputs")
                 .addLayer("outputs",
                         new Yolo2OutputLayer.Builder()
-                                .lambbaNoObj(LAMDBA_NO_OBJECT)
-                                .lambdaCoord(LAMDBA_COORD)
+                                .lambbaNoObj(LAMBDA_NO_OBJECT)
+                                .lambdaCoord(LAMBDA_COORD)
                                 .boundingBoxPriors(priors)
-                                .build(), "convolution2d_9")
+                                .build(), "convolution2d_23")
                 .setOutputs("outputs")
                 .build();
 
         model.addListeners(new StatsListener(statsStorage));
+
+        for(int i = 1; i < EPOCHS; ++i){
+            train.reset();
+            while (train.hasNext()){
+                model.fit(train.next());
+            }
+            System.out.println(String.format("Finished epoch %s " , i));
+        }
+
+        ModelSerializer.writeModel(model, "detection_model.data", true);
+        System.out.println(model.summary());
     }
 
     /**
@@ -177,6 +202,9 @@ public class YOLOTrainer {
         return new Pair<>(data[0], data[1]);
     }
 
+    /**
+     * @return an instance of the YOLOTrainer class
+     */
     public static YOLOTrainer getInstance(){
 
         if(_instance == null){
@@ -188,6 +216,23 @@ public class YOLOTrainer {
         }
 
         return _instance;
+    }
+
+    /**
+     * @return the trained detection_model
+     * @throws Exception: if the detection_model does not exist
+     */
+    public static ComputationGraph getModel() throws Exception {
+
+        final String modelName = ConstantsManager.getInstance().get("modelPath");
+
+        File file = new File(modelName);
+
+        if (!file.exists() || file.isDirectory()) {
+            throw new Exception("Saved detection_model not found!");
+        }
+
+        return ModelSerializer.restoreComputationGraph(file);
     }
 
     private Random random;
