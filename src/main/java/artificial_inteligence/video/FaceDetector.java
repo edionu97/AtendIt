@@ -8,7 +8,6 @@ import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacpp.opencv_videoio;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.opencv.core.Scalar;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
