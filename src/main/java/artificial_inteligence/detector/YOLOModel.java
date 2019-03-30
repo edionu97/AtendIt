@@ -8,9 +8,6 @@ import artificial_inteligence.trainer.YOLOTrainer;
 import artificial_inteligence.utils.xmls.BndBox;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
-import static org.bytedeco.javacpp.opencv_imgproc.putText;
-import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
-
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.objdetect.DetectedObject;
