@@ -8,6 +8,7 @@ import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacpp.opencv_videoio;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import utils.image.ImageOps;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,7 +20,7 @@ import static org.opencv.videoio.Videoio.CV_CAP_PROP_FRAME_HEIGHT;
 
 public class FaceDetector {
 
-    public  void play() throws  Exception {
+    public void play() throws Exception {
 
         YOLOModel detector = new YOLOModel();
 
@@ -57,39 +58,20 @@ public class FaceDetector {
 
                 List<BndBox> detectedObjs = detector.detectObject(image, .4);
 
-                drawBoxes(
+                ImageOps.drawRectangles(
                         image,
-                        detectedObjs
+                        detectedObjs,
+                        true
                 );
 
                 double per = (System.currentTimeMillis() - st) / 1000.0;
-                putText(image, "Detection Time : " + per + " ms", new opencv_core.Point(10, 25), 2,.9, opencv_core.Scalar.YELLOW);
+                putText(image, "Detection Time : " + per + " ms", new opencv_core.Point(10, 25), 2, .9, opencv_core.Scalar.YELLOW);
 
                 mainframe.showImage(converter.convert(image));
 
                 Thread.sleep(20);
 
             }
-        }
-    }
-
-    private void drawBoxes(opencv_core.Mat image, final List<BndBox> objects) {
-
-        for (BndBox obj : objects) {
-
-            int x1 = obj.getXmin();
-            int y1 = obj.getYmin();
-            int x2 = obj.getXmax();
-            int y2 = obj.getYmax();
-
-            rectangle(
-                    image,
-                    new opencv_core.Point(x1, y1),
-                    new opencv_core.Point(x2, y2),
-                    opencv_core.Scalar.RED
-            );
-
-            putText(image, "Face", new opencv_core.Point(x1 + 2, y2 - 2), 1, .8, opencv_core.Scalar.RED);
         }
     }
 

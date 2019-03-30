@@ -9,6 +9,7 @@ import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
+import utils.image.TrainImageResize;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -103,6 +104,11 @@ public class TrainFileIterator {
                 annotationDir.getPath() + "\\" + name,
                 parser.createAnnotation(imagePath)
         );
+
+        resizer.resize(
+                imagePath.getPath(),
+                RESIZE_WIDTH, RESIZE_HEIGHT
+        );
     }
 
 
@@ -129,4 +135,8 @@ public class TrainFileIterator {
     private Marshaller marshaller = context.createMarshaller();
 
     private StringBuilder builder = new StringBuilder();
+
+    private TrainImageResize resizer = new TrainImageResize();
+
+    private static  final int RESIZE_WIDTH = 416, RESIZE_HEIGHT = 416;
 }

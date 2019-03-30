@@ -54,9 +54,9 @@ public class YOLOTrainer {
             {9.77052, 9.16828}
     };
 
-    private static final int BATCH_SIZE = 4;
+    private static final int BATCH_SIZE = 32;
     private static final int EPOCHS = 50;
-    private static final double LEARNING_RATE = 0.00001;
+    private static final double LEARNING_RATE = 0.0001;
     private static  final  int SEED = 1024;
 
     private static final double LAMBDA_COORD = 1.0;
@@ -89,7 +89,7 @@ public class YOLOTrainer {
         }
 
         Pair<InputSplit, InputSplit> trainTest = getTrainAndTestData(
-                file, 1, .0
+                file, .9, .1
         );
 
         InputSplit trainData = trainTest.getKey();
