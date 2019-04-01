@@ -15,12 +15,12 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
+import org.deeplearning4j.zoo.model.Darknet19;
+import org.deeplearning4j.zoo.model.FaceNetNN4Small2;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import utils.ConstantsManager;
 import utils.image.ImageOps;
-import utils.image.TrainImageResize;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
@@ -45,8 +45,6 @@ public class Main {
         YOLOTrainer.getInstance().doTrain(statsStorage);
 
         //new FaceDetector().play();
-
-
 
     }
 

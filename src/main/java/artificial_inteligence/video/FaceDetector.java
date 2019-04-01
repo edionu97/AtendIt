@@ -8,6 +8,7 @@ import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacpp.opencv_videoio;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.opencv.core.Mat;
 import utils.image.ImageOps;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class FaceDetector {
         );
 
         capture.get().set(CV_CAP_PROP_FRAME_WIDTH, 416);
-        capture.get().set(CV_CAP_PROP_FRAME_HEIGHT, 416);
+        capture.get().set(CV_CAP_PROP_FRAME_HEIGHT,416);
 
         if (!capture.get().open(0)) {
             System.out.println("Error");
@@ -58,6 +59,7 @@ public class FaceDetector {
 
                 List<BndBox> detectedObjs = detector.detectObject(image, .4);
 
+
                 ImageOps.drawRectangles(
                         image,
                         detectedObjs,
@@ -73,6 +75,38 @@ public class FaceDetector {
 
             }
         }
+    }
+
+    public  void detect(final Mat img) throws  Exception{
+
+        final YOLOModel model = new YOLOModel();
+
+        OpenCVFrameConverter.ToMat converter1 = new OpenCVFrameConverter.ToMat();
+        OpenCVFrameConverter.ToOrgOpenCvCoreMat converter2 = new OpenCVFrameConverter.ToOrgOpenCvCoreMat();
+
+        opencv_core.Mat image = converter1.convert(converter2.convert(img));
+
+        opencv_imgproc.resize(
+                image, image, new opencv_core.Size(IMAGE_INPUT_W, IMAGE_INPUT_H)
+        );
+
+
+        double st = System.currentTimeMillis();
+
+        List<BndBox> detectedObjs = model.detectObject(image, .4);
+
+
+        double per = (System.currentTimeMillis() - st) / 1000.0;
+
+        ImageOps.drawRectangles(
+                image,
+                detectedObjs,
+                true
+        );
+
+        putText(image, "Detection Time : " + per + " ms", new opencv_core.Point(10, 25), 2, .9, opencv_core.Scalar.YELLOW);
+
+        ImageOps.displayImage(image);
     }
 
 

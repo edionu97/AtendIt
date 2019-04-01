@@ -22,15 +22,19 @@ import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.ui.stats.StatsListener;
 import org.deeplearning4j.util.ModelSerializer;
+import org.deeplearning4j.zoo.PretrainedType;
+import org.deeplearning4j.zoo.model.TinyYOLO;
 import org.deeplearning4j.zoo.model.YOLO2;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.learning.config.RmsProp;
+import org.nd4j.linalg.learning.config.*;
 import utils.ConstantsManager;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Random;
@@ -47,17 +51,17 @@ public class YOLOTrainer {
     private static final int BOXES_NUMBER = 5;
 
     private static final double[][] PRIOR_BOXES = {
-            {0.57273, 0.677385},
-            {1.87446, 2.06253},
-            {3.33843, 5.47434},
-            {7.88282, 3.52778},
-            {9.77052, 9.16828}
+            {1.19, 1.99},
+            {2.79, 4.60},
+            {4.54, 8.93},
+            {5.29, 8.06},
+            {10.33, 10.65}
     };
 
-    private static final int BATCH_SIZE = 32;
-    private static final int EPOCHS = 50;
+    private static final int BATCH_SIZE = 1;
+    private static final int EPOCHS = 2;
     private static final double LEARNING_RATE = 0.0001;
-    private static  final  int SEED = 1024;
+    private static  final  int SEED = (int)System.nanoTime();
 
     private static final double LAMBDA_COORD = 1.0;
     private static final double LAMBDA_NO_OBJECT = 0.5;
@@ -108,56 +112,27 @@ public class YOLOTrainer {
         );
         train.setPreProcessor(new ImagePreProcessingScaler(0, 1));
 
-        ComputationGraph pretrained = (ComputationGraph) YOLO2.builder().build().initPretrained();
-
-        INDArray priors = Nd4j.create(PRIOR_BOXES);
-
-        FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
-                .seed(SEED)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
-                .gradientNormalizationThreshold(1.0)
-                .updater(new RmsProp(LEARNING_RATE))
-                .activation(Activation.IDENTITY).miniBatch(true)
-                .trainingWorkspaceMode(WorkspaceMode.ENABLED)
-                .build();
-
-
-        ComputationGraph model = new TransferLearning.GraphBuilder(pretrained)
-                .fineTuneConfiguration(fineTuneConf)
-                .setInputTypes(InputType.convolutional(INPUT_HEIGHT, INPUT_WIDTH, CHANNELS))
-                .removeVertexKeepConnections("conv2d_23")
-                .addLayer("convolution2d_23",
-                        new ConvolutionLayer.Builder(1, 1)
-                                .nIn(1024)
-                                .nOut(BOXES_NUMBER * (5 + CLASSES_NUMBER))
-                                .stride(1, 1)
-                                .convolutionMode(ConvolutionMode.Same)
-                                .weightInit(WeightInit.UNIFORM)
-                                .hasBias(false)
-                                .activation(Activation.IDENTITY)
-                                .build(), "leaky_re_lu_22")
-                .removeVertexKeepConnections("outputs")
-                .addLayer("outputs",
-                        new Yolo2OutputLayer.Builder()
-                                .lambbaNoObj(LAMBDA_NO_OBJECT)
-                                .lambdaCoord(LAMBDA_COORD)
-                                .boundingBoxPriors(priors)
-                                .build(), "convolution2d_23")
-                .setOutputs("outputs")
-                .build();
+        final ComputationGraph model = getOrCreateModel();
 
         model.addListeners(new StatsListener(statsStorage));
 
-        for(int i = 1; i < EPOCHS; ++i){
+        File f = new File("result.txt");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+
+        for(int i = 0; i < EPOCHS; ++i){
+
             train.reset();
             while (train.hasNext()){
                 model.fit(train.next());
             }
             System.out.println(String.format("Finished epoch %s " , i));
+
+
+            writer.write(i + "\n");
+            writer.flush();
         }
 
-        ModelSerializer.writeModel(model, "detection_model.data", true);
+        ModelSerializer.writeModel(model, "detection1_model.data", true);
         System.out.println(model.summary());
     }
 
@@ -200,6 +175,62 @@ public class YOLOTrainer {
 
 
         return new Pair<>(data[0], data[1]);
+    }
+
+    /**
+     * Returns the computation graph if exists otherwise creates one
+     * @return a computation graph
+     * @throws Exception if something is wrong
+     */
+    private ComputationGraph getOrCreateModel() throws Exception {
+
+        try{
+            return getModel();
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+
+        ComputationGraph pretrained = (ComputationGraph) TinyYOLO
+                .builder()
+                .build()
+                .initPretrained();
+
+        INDArray priors = Nd4j.create(PRIOR_BOXES);
+
+        FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
+                .seed(SEED)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
+                .gradientNormalizationThreshold(1.0)
+                .updater(new Adam(LEARNING_RATE))
+                .activation(Activation.IDENTITY).miniBatch(true)
+                .trainingWorkspaceMode(WorkspaceMode.ENABLED)
+                .build();
+
+
+        return new TransferLearning.GraphBuilder(pretrained)
+                .fineTuneConfiguration(fineTuneConf)
+                .setInputTypes(InputType.convolutional(INPUT_HEIGHT, INPUT_WIDTH, CHANNELS))
+                .removeVertexKeepConnections("conv2d_9")
+                .addLayer("convolution2d_9",
+                        new ConvolutionLayer.Builder(1, 1)
+                                .nIn(1024)
+                                .nOut(BOXES_NUMBER * (5 + CLASSES_NUMBER))
+                                .stride(1, 1)
+                                .convolutionMode(ConvolutionMode.Same)
+                                .weightInit(WeightInit.XAVIER)
+                                .hasBias(false)
+                                .activation(Activation.IDENTITY)
+                                .build(), "leaky_re_lu_8")
+                .removeVertexKeepConnections("outputs")
+                .addLayer("outputs",
+                        new Yolo2OutputLayer.Builder()
+                                .lambbaNoObj(LAMBDA_NO_OBJECT)
+                                .lambdaCoord(LAMBDA_COORD)
+                                .boundingBoxPriors(priors)
+                                .build(), "convolution2d_9")
+                .setOutputs("outputs")
+                .build();
     }
 
     /**

@@ -9,6 +9,7 @@ import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
+import utils.ConstantsManager;
 import utils.image.TrainImageResize;
 
 import javax.xml.bind.JAXBContext;
@@ -79,7 +80,8 @@ public class TrainFileIterator {
                     matrix.size().height,
                     builder.toString(),
                     image,
-                    annotationDir
+                    annotationDir,
+                    false
             );
 
         }
@@ -88,7 +90,7 @@ public class TrainFileIterator {
     private void _addAnnotation(
             final String outputDirName,
             final double width, final double height,
-            final String fileContent, final  File imagePath, final File annotationDir) throws Exception {
+            final String fileContent, final  File imagePath, final File annotationDir, final  boolean resize) throws Exception {
 
 
         IOldAnnotationParser parser = new OldAnnotationParser(
@@ -105,12 +107,15 @@ public class TrainFileIterator {
                 parser.createAnnotation(imagePath)
         );
 
+        if(!resize){
+            return;
+        }
+
         resizer.resize(
                 imagePath.getPath(),
                 RESIZE_WIDTH, RESIZE_HEIGHT
         );
     }
-
 
     private void _writeAnnotationToFile(final String dirPath, Annotation annotation) throws Exception {
 
@@ -121,8 +126,6 @@ public class TrainFileIterator {
 
         marshaller.marshal(annotation, file);
     }
-
-
 
     private JAXBContext context = JAXBContext.newInstance(
             Source.class,
