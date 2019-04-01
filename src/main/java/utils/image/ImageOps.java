@@ -43,9 +43,28 @@ public class ImageOps {
 
     public static Mat cropImage(final Mat mat, final Rect rect){
 
-        final opencv_core.Mat image = toCoreMat(mat);
+        rect.height = (int)Math.min(
+                rect.height,
+                mat.size().height - rect.y
+        );
 
-        return null;
+        rect.width = (int)Math.min(
+                rect.width,
+                mat.size().width - rect.x
+        );
+
+
+        final double[] size = {rect.width, rect.height};
+
+
+        Mat img = new Mat(
+                mat,
+                rect
+        );
+
+        img.size().set(size);
+
+        return img;
     }
 
 

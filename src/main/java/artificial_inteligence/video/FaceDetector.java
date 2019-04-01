@@ -2,6 +2,7 @@ package artificial_inteligence.video;
 
 
 import artificial_inteligence.detector.YOLOModel;
+import artificial_inteligence.trainer.YOLOTrainer;
 import artificial_inteligence.utils.xmls.BndBox;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_imgproc;
@@ -29,8 +30,8 @@ public class FaceDetector {
                 new opencv_videoio.VideoCapture()
         );
 
-        capture.get().set(CV_CAP_PROP_FRAME_WIDTH, 416);
-        capture.get().set(CV_CAP_PROP_FRAME_HEIGHT,416);
+        capture.get().set(CV_CAP_PROP_FRAME_WIDTH, YOLOTrainer.INPUT_WIDTH);
+        capture.get().set(CV_CAP_PROP_FRAME_HEIGHT,YOLOTrainer.GRID_HEIGHT);
 
         if (!capture.get().open(0)) {
             System.out.println("Error");
@@ -43,7 +44,7 @@ public class FaceDetector {
                 CanvasFrame.getDefaultGamma() / 2.2
         );
 
-        mainframe.setCanvasSize(416, 416);
+        mainframe.setCanvasSize(YOLOTrainer.INPUT_WIDTH, YOLOTrainer.INPUT_HEIGHT);
         mainframe.setLocationRelativeTo(null);
         mainframe.setVisible(true);
         mainframe.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);

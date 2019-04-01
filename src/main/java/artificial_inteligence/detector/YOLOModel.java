@@ -16,7 +16,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 
 
-public class YOLOModel {
+public class YOLOModel implements IDetector<ComputationGraph> {
 
     public YOLOModel() {
         try {
@@ -26,11 +26,12 @@ public class YOLOModel {
         }
     }
 
+    @Override
     public ComputationGraph getNetwork() {
         return network;
     }
 
-
+    @Override
     public List<BndBox> detectObject(Mat image, double threshHold) throws Exception {
 
         // get the output layer of the network

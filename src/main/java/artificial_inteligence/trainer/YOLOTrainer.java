@@ -61,8 +61,8 @@ public class YOLOTrainer {
             {10.33, 10.65}
     };
 
-    private static final int BATCH_SIZE = 8;
-    private static final int EPOCHS = 2;
+    private static final int BATCH_SIZE = 4;
+    private static final int EPOCHS = 5;
     private static final double LEARNING_RATE = 0.0001;
     private static  final  int SEED = 1234;
 

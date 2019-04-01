@@ -1,22 +1,18 @@
 package artificial_inteligence;
 
-import artificial_inteligence.trainer.YOLOTrainer;
+import artificial_inteligence.detector.YOLOModel;
 import artificial_inteligence.utils.TrainFileIterator;
 import artificial_inteligence.utils.annotation.Annotation;
 import artificial_inteligence.utils.xmls.BndBox;
 import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
+import artificial_inteligence.video.DetectionCropper;
 import artificial_inteligence.video.FaceDetector;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_java;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.deeplearning4j.api.storage.StatsStorage;
-import org.deeplearning4j.ui.api.UIServer;
-import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
-import org.deeplearning4j.zoo.model.Darknet19;
-import org.deeplearning4j.zoo.model.FaceNetNN4Small2;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import utils.ConstantsManager;
@@ -24,6 +20,7 @@ import utils.image.ImageOps;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -32,15 +29,28 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
-        Loader.load(opencv_java.class);
+//        Loader.load(opencv_java.class);
+////
+//        Mat img = Imgcodecs.imread(
+//                "C:\\Users\\Eduard\\Desktop\\str.png"
+//        );
+//
+//        DetectionCropper detectionCropper = new DetectionCropper(new YOLOModel());
+//
+//        List<Mat> list = detectionCropper.getDetectedObjects(
+//                ImageOps.toCoreMat(img), .4
+//        );
+//
+//        for(Mat mat : list){
+//            ImageOps.displayImage(mat);
+//        }
+//
+//
+//        new FaceDetector().detect(
+//                img
+//        );
 
-        Mat img = Imgcodecs.imread(
-                "E:\\FDDB\\2003\\01\\01\\big\\img_698.jpg"
-        );
-
-
-
-        ImageOps.displayImage(img);
+        //ImageOps.displayImage(img);
 
         //annotateData();
 
@@ -53,7 +63,7 @@ public class Main {
 //
 //        YOLOTrainer.getInstance().doTrain(statsStorage);
 
-        //new FaceDetector().play();
+        new FaceDetector().play();
 
     }
 

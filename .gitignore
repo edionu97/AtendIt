@@ -3,6 +3,7 @@
 /build/
 out/
 result.txt
+*.jpg
 
 gradle-app.setting
 
