@@ -38,7 +38,7 @@ public class Main {
                 "E:\\FDDB\\2003\\01\\01\\big\\img_698.jpg"
         );
 
-        
+
 
         ImageOps.displayImage(img);
 

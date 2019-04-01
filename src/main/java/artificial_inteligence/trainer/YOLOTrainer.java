@@ -41,13 +41,16 @@ import java.util.Random;
 
 public class YOLOTrainer {
 
-    private static final int INPUT_WIDTH = 416;
-    private static final int INPUT_HEIGHT = 416;
-    private static final int CHANNELS = 3;
+    public static final int GRID_WIDTH = 13;
+    public static final int GRID_HEIGHT = 13;
+    public static final int INPUT_WIDTH = 416;
+    public static final int INPUT_HEIGHT = 416;
+    public static final int CHANNELS = 3;
 
-    private static final int GRID_WIDTH = 13;
-    private static final int GRID_HEIGHT = 13;
+
     private static final int CLASSES_NUMBER = 1;
+
+
     private static final int BOXES_NUMBER = 5;
 
     private static final double[][] PRIOR_BOXES = {

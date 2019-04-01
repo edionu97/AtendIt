@@ -84,9 +84,9 @@ public class YOLOModel {
 
     private ComputationGraph network;
 
-    private final int GRID_W = 13;
-    private final int GRID_H = 13;
-    private final int CHANNELS = 3;
-    private final int IMAGE_INPUT_W = 416;
-    private final int IMAGE_INPUT_H = 416;
+    private final int GRID_W = YOLOTrainer.GRID_WIDTH;
+    private final int GRID_H = YOLOTrainer.GRID_HEIGHT;
+    private final int CHANNELS = YOLOTrainer.CHANNELS;
+    private final int IMAGE_INPUT_W = YOLOTrainer.INPUT_WIDTH;
+    private final int IMAGE_INPUT_H = YOLOTrainer.INPUT_HEIGHT;
 }
