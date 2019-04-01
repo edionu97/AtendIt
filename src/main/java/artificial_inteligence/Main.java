@@ -32,25 +32,32 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
+        Loader.load(opencv_java.class);
+
+        Mat img = Imgcodecs.imread(
+                "E:\\FDDB\\2003\\01\\01\\big\\img_698.jpg"
+        );
+
+        
+
+        ImageOps.displayImage(img);
 
         //annotateData();
 
-        final StatsStorage statsStorage = new InMemoryStatsStorage();
-        UIServer
-                .getInstance()
-                .attach(
-                        statsStorage
-                );
-
-        YOLOTrainer.getInstance().doTrain(statsStorage);
+//        final StatsStorage statsStorage = new InMemoryStatsStorage();
+//        UIServer
+//                .getInstance()
+//                .attach(
+//                        statsStorage
+//                );
+//
+//        YOLOTrainer.getInstance().doTrain(statsStorage);
 
         //new FaceDetector().play();
 
     }
 
     private static void annotateData() throws Exception {
-
-        Loader.load(opencv_java.class);
 
         final ConstantsManager manager = ConstantsManager.getInstance();
 
@@ -80,7 +87,6 @@ public class Main {
     }
 
     private static  void checkAdnotaions() throws  Exception{
-        Loader.load(opencv_java.class);
         // loop through all the images from that specific folder
 
         final ConstantsManager manager = ConstantsManager.getInstance();

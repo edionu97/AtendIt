@@ -4,6 +4,7 @@ import artificial_inteligence.utils.xmls.BndBox;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,6 +41,13 @@ public class ImageOps {
         }
     }
 
+    public static Mat cropImage(final Mat mat, final Rect rect){
+
+        final opencv_core.Mat image = toCoreMat(mat);
+
+        return null;
+    }
+
 
     public static void displayImage(final Mat image) {
 
@@ -64,6 +72,21 @@ public class ImageOps {
         displayImage(converter2.convert(converter1.convert(image)));
     }
 
+    public static opencv_core.Mat toCoreMat(final Mat mat){
+
+        OpenCVFrameConverter.ToMat converter1 = new OpenCVFrameConverter.ToMat();
+        OpenCVFrameConverter.ToOrgOpenCvCoreMat converter2 = new OpenCVFrameConverter.ToOrgOpenCvCoreMat();
+
+        return converter1.convert(converter2.convert(mat));
+    }
+
+    public  static Mat toMat(final opencv_core.Mat mat){
+
+        OpenCVFrameConverter.ToMat converter1 = new OpenCVFrameConverter.ToMat();
+        OpenCVFrameConverter.ToOrgOpenCvCoreMat converter2 = new OpenCVFrameConverter.ToOrgOpenCvCoreMat();
+
+        return converter2.convert(converter1.convert(mat));
+    }
 
     private static BufferedImage _Mat2BufferedImage(Mat m) {
 

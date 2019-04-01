@@ -5,5 +5,5 @@
     <image-file-parent-path>E:\Dataset</image-file-parent-path>
     <annotation-folder-path>E:Dataset\annotations</annotation-folder-path>
     <old-annotation-folder-path>C:\Users\Eduard\Desktop\wider_face_train_bbx_gt.txt</old-annotation-folder-path>
-    <model-path>C:\Users\Eduard\Desktop\detection1_model.data</model-path>
+    <model-path>C:\Users\Eduard\Desktop\detection_model.data</model-path>
 </constants>

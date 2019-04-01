@@ -58,10 +58,10 @@ public class YOLOTrainer {
             {10.33, 10.65}
     };
 
-    private static final int BATCH_SIZE = 1;
+    private static final int BATCH_SIZE = 8;
     private static final int EPOCHS = 2;
     private static final double LEARNING_RATE = 0.0001;
-    private static  final  int SEED = (int)System.nanoTime();
+    private static  final  int SEED = 1234;
 
     private static final double LAMBDA_COORD = 1.0;
     private static final double LAMBDA_NO_OBJECT = 0.5;
