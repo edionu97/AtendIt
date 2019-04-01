@@ -30,13 +30,13 @@ public class Main {
     public static void main(String... args) throws Exception {
 
 //        Loader.load(opencv_java.class);
-////
+//////
 //        Mat img = Imgcodecs.imread(
-//                "C:\\Users\\Eduard\\Desktop\\str.png"
+//                "C:\\Users\\Eduard\\Desktop\\test.jpg"
 //        );
-//
+////
 //        DetectionCropper detectionCropper = new DetectionCropper(new YOLOModel());
-//
+////
 //        List<Mat> list = detectionCropper.getDetectedObjects(
 //                ImageOps.toCoreMat(img), .4
 //        );
@@ -44,8 +44,8 @@ public class Main {
 //        for(Mat mat : list){
 //            ImageOps.displayImage(mat);
 //        }
-//
-//
+////
+////
 //        new FaceDetector().detect(
 //                img
 //        );
@@ -63,7 +63,7 @@ public class Main {
 //
 //        YOLOTrainer.getInstance().doTrain(statsStorage);
 
-        new FaceDetector().play();
+        //new FaceDetector().play();
 
     }
 

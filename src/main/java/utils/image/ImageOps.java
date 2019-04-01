@@ -2,14 +2,20 @@ package utils.image;
 
 import artificial_inteligence.utils.xmls.BndBox;
 import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
+import utils.ConstantsManager;
 
 import javax.swing.*;
+import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_imgproc.putText;
@@ -67,6 +73,12 @@ public class ImageOps {
         return img;
     }
 
+    public static Mat getMatrixFromBytes(final byte[] bytes){
+        return  Imgcodecs.imdecode(
+                new MatOfByte(bytes), Imgcodecs.CV_LOAD_IMAGE_UNCHANGED
+        );
+    }
+
 
     public static void displayImage(final Mat image) {
 
@@ -80,7 +92,7 @@ public class ImageOps {
         lbl.setIcon(new ImageIcon(image1));
         frame.add(lbl);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public  static  void displayImage(final opencv_core.Mat image){
@@ -128,5 +140,6 @@ public class ImageOps {
         return image;
     }
 
+    private static ConstantsManager manager = ConstantsManager.getInstance();
 
 }

@@ -33,6 +33,14 @@ public class Constants {
         return modelPath;
     }
 
+    public String getAcceptedImageWidth() {
+        return acceptedImageWidth;
+    }
+
+    public String getAcceptedImageHeight() {
+        return acceptedImageHeight;
+    }
+
     @XmlElement
     public void setOpencv(String opencv) {
         this.opencv = opencv;
@@ -71,10 +79,28 @@ public class Constants {
         this.modelPath = modelPath;
     }
 
+    @XmlElement(
+            name = "accepted-image-height"
+    )
+    public void setAcceptedImageHeight(String acceptedImageHeight) {
+        this.acceptedImageHeight = acceptedImageHeight;
+    }
+
+    @XmlElement(
+            name = "accepted-image-width"
+    )
+    public void setAcceptedImageWidth(String acceptedImageWidth) {
+        this.acceptedImageWidth = acceptedImageWidth;
+    }
+
+
+
 
     private String opencv;
     private String modelPath;
     private String imageFolderName;
+    private String acceptedImageWidth;
+    private String acceptedImageHeight;
     private String imageFileParentPath;
     private String annotationFolderPath;
     private String oldAnnotationFolderPath;
