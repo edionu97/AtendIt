@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/attendit?verifyServerCertificate=false&amp;useSSL=true</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/attendit?verifyServerCertificate=false&amp;useSSL=true&amp;serverTimezone=UTC</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">9389</property>
         <property name="hibernate.show_sql">false</property>
