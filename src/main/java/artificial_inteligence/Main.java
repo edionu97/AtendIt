@@ -1,17 +1,19 @@
 package artificial_inteligence;
 
-import artificial_inteligence.detector.YOLOModel;
+import artificial_inteligence.utils.KMeansBoundingBoxFinder;
 import artificial_inteligence.utils.TrainFileIterator;
 import artificial_inteligence.utils.annotation.Annotation;
 import artificial_inteligence.utils.xmls.BndBox;
 import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
-import artificial_inteligence.video.DetectionCropper;
-import artificial_inteligence.video.FaceDetector;
-import org.bytedeco.javacpp.Loader;
+import net.sf.javaml.clustering.KMeans;
+import net.sf.javaml.core.Dataset;
+import net.sf.javaml.core.DefaultDataset;
+import net.sf.javaml.core.Instance;
+import net.sf.javaml.core.SparseInstance;
+import net.sf.javaml.distance.*;
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_java;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -20,7 +22,6 @@ import utils.image.ImageOps;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,10 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
-//        Loader.load(opencv_java.class);
+        new KMeansBoundingBoxFinder(5, 1000).getBoxes();
+    }
+
+    //        Loader.load(opencv_java.class);
 //////
 //        Mat img = Imgcodecs.imread(
 //                "C:\\Users\\Eduard\\Desktop\\test.jpg"
@@ -50,9 +54,9 @@ public class Main {
 //                img
 //        );
 
-        //ImageOps.displayImage(img);
+    //ImageOps.displayImage(img);
 
-        //annotateData();
+    //annotateData();
 
 //        final StatsStorage statsStorage = new InMemoryStatsStorage();
 //        UIServer
@@ -63,9 +67,8 @@ public class Main {
 //
 //        YOLOTrainer.getInstance().doTrain(statsStorage);
 
-        //new FaceDetector().play();
+    //new FaceDetector().play();
 
-    }
 
     private static void annotateData() throws Exception {
 
