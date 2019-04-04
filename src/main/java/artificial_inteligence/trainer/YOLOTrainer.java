@@ -25,6 +25,7 @@ import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.model.TinyYOLO;
 import org.deeplearning4j.zoo.model.YOLO2;
+import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
@@ -54,24 +55,23 @@ public class YOLOTrainer {
     private static final int BOXES_NUMBER = 5;
 
     private static final double[][] PRIOR_BOXES = {
-            {1.19, 1.99},
-            {2.79, 4.60},
-            {4.54, 8.93},
-            {5.29, 8.06},
-            {10.33, 10.65}
+            {2.49232002960952, 4.376596138424527},
+            {6.07768975210835, 10.83388704318936},
+            {8.437388193202148, 19.88014311270124},
+            {0.46459487069196176, 0.8670441338864238},
+            {15.992743105950652, 20.329462989840344}
     };
 
-    private static final int BATCH_SIZE = 4;
-    private static final int EPOCHS = 5;
-    private static final double LEARNING_RATE = 0.0001;
-    private static  final  int SEED = 1234;
+    private static final int BATCH_SIZE = 1;
+    private static final int EPOCHS = 10;
+    private static final double LEARNING_RATE = 0.00001;
+    private static final int SEED = (int) System.nanoTime();
 
     private static final double LAMBDA_COORD = 1.0;
     private static final double LAMBDA_NO_OBJECT = 0.5;
 
 
-
-    private YOLOTrainer(){
+    private YOLOTrainer() {
         manager = ConstantsManager.getInstance();
         random = new Random(SEED);
     }
@@ -79,17 +79,18 @@ public class YOLOTrainer {
 
     /**
      * Performs training of the network
+     *
      * @param statsStorage: the stats storage used to display network train stats
      * @throws Exception: if something went wrong
      */
-    public void doTrain(final StatsStorage statsStorage) throws  Exception{
+    public void doTrain(final StatsStorage statsStorage) throws Exception {
 
         final File file = new File(
                 manager.get("imageFileParentPath"),
                 manager.get("imageFolderName")
         );
 
-        if(!file.exists()){
+        if (!file.exists()) {
             throw new Exception(
                     "Train image directory does not exist"
             );
@@ -122,13 +123,13 @@ public class YOLOTrainer {
         File f = new File("result.txt");
         BufferedWriter writer = new BufferedWriter(new FileWriter(f));
 
-        for(int i = 0; i < EPOCHS; ++i){
+        for (int i = 0; i < EPOCHS; ++i) {
 
             train.reset();
-            while (train.hasNext()){
+            while (train.hasNext()) {
                 model.fit(train.next());
             }
-            System.out.println(String.format("Finished epoch %s " , i));
+            System.out.println(String.format("Finished epoch %s ", i));
 
 
             writer.write(i + "\n");
@@ -142,18 +143,19 @@ public class YOLOTrainer {
     /**
      * Reads all the images from image folder and distribute images in two categories train and test randomly,
      * based on a percentage
-     * @param imageDir: the file that represents the image directory
+     *
+     * @param imageDir:  the file that represents the image directory
      * @param trainSize: the percentage of images that should be kept for training
-     * @param testSize: the percentage of images that should be kept for testing
+     * @param testSize:  the percentage of images that should be kept for testing
      * @return a pair of values where Pair.key represents train images and Pair.value represents test images
      */
     @SuppressWarnings("SameParameterValue")
-    private Pair<InputSplit, InputSplit> getTrainAndTestData(final File imageDir, final double trainSize, final double testSize){
+    private Pair<InputSplit, InputSplit> getTrainAndTestData(final File imageDir, final double trainSize, final double testSize) {
 
         ///Create a filter to keep only those images that have a corresponding annotation file in /annotation folder
-        RandomPathFilter filter = new RandomPathFilter(random){
+        RandomPathFilter filter = new RandomPathFilter(random) {
             @Override
-            protected boolean accept(String name){
+            protected boolean accept(String name) {
 
                 final String imageAnnotation = name
                         .replace("/images/", "/annotations/")
@@ -182,14 +184,15 @@ public class YOLOTrainer {
 
     /**
      * Returns the computation graph if exists otherwise creates one
+     *
      * @return a computation graph
      * @throws Exception if something is wrong
      */
     private ComputationGraph getOrCreateModel() throws Exception {
 
-        try{
+        try {
             return getModel();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 
@@ -205,7 +208,7 @@ public class YOLOTrainer {
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .gradientNormalizationThreshold(1.0)
-                .updater(new Adam(LEARNING_RATE))
+                .updater(new AMSGrad(LEARNING_RATE))
                 .activation(Activation.IDENTITY).miniBatch(true)
                 .trainingWorkspaceMode(WorkspaceMode.ENABLED)
                 .build();
@@ -239,11 +242,11 @@ public class YOLOTrainer {
     /**
      * @return an instance of the YOLOTrainer class
      */
-    public static YOLOTrainer getInstance(){
+    public static YOLOTrainer getInstance() {
 
-        if(_instance == null){
-            synchronized (YOLOTrainer.class){
-                if(_instance == null){
+        if (_instance == null) {
+            synchronized (YOLOTrainer.class) {
+                if (_instance == null) {
                     _instance = new YOLOTrainer();
                 }
             }

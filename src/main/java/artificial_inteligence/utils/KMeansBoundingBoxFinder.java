@@ -9,12 +9,19 @@ import artificial_inteligence.utils.xmls.Source;
 import net.sf.javaml.clustering.KMeans;
 import net.sf.javaml.core.*;
 import net.sf.javaml.distance.EuclideanDistance;
+import net.sf.javaml.distance.JaccardIndexDistance;
+import net.sf.javaml.distance.JaccardIndexSimilarity;
+import net.sf.javaml.tools.DatasetTools;
+import org.bytedeco.javacv.FrameFilter;
 import utils.ConstantsManager;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.crypto.Data;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +33,7 @@ public class KMeansBoundingBoxFinder {
     public KMeansBoundingBoxFinder(int clusters, int maxIter) {
 
         kMeans = new KMeans(
-                clusters, maxIter, new EuclideanDistance()
+                clusters, maxIter, new JaccardIndexDistance()
         );
 
         try {
@@ -37,24 +44,28 @@ public class KMeansBoundingBoxFinder {
                     BndBox.class,
                     Annotation.class
             ).createUnmarshaller();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         this.instances = getInstances();
+
     }
 
 
     public void getBoxes() {
 
-        final  Dataset dataset = new DefaultDataset();
+        final Dataset dataset = new DefaultDataset();
         dataset.addAll(instances);
+
+        kMeans.cluster(dataset);
 
         Dataset[] clusters = kMeans.cluster(dataset);
 
+
         for(final Dataset cluster : clusters){
             final Instance centroid = get2DCentroid(cluster);
-            System.out.println(centroid.value(0) * 32 + " " +centroid.value(1) * 32);
+            System.out.println("{" + centroid.value(0) * 1 + "," +centroid.value(1) * 1 + "}");
         }
     }
 
@@ -66,25 +77,27 @@ public class KMeansBoundingBoxFinder {
 
         List<Instance> list = new ArrayList<>();
 
-        for(final File file : Objects.requireNonNull(new File(annotationPath).listFiles())){
-            try{
+        for (final File file : Objects.requireNonNull(new File(annotationPath).listFiles())) {
+            try {
 
-                Annotation annotation = (Annotation)unmarshaller.unmarshal(file);
+                Annotation annotation = (Annotation) unmarshaller.unmarshal(file);
 
-                for(final Object object : annotation.getObject()){
+                for (final Object object : annotation.getObject()) {
 
-                    final BndBox bndBox  = object.getBndbox();
+                    final BndBox bndBox = object.getBndbox();
 
                     double[] dst = new double[2];
                     dst[0] = (bndBox.getXmax() - bndBox.getXmin() + .0) / annotation.getSize().getWidth();
                     dst[1] = (bndBox.getYmax() - bndBox.getYmin() + .0) / annotation.getSize().getHeight();
+                    dst[0] *= 32;
+                    dst[1] *= 32;
 
                     list.add(
                             new SparseInstance(dst)
                     );
                 }
 
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -95,6 +108,7 @@ public class KMeansBoundingBoxFinder {
 
     /**
      * Get the centroid of 2D cluster of points
+     *
      * @param cluster: the cluster of points
      * @return an 2D instance which represents the coordinates of the centroid
      */

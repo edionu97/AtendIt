@@ -1,5 +1,6 @@
 package artificial_inteligence;
 
+import artificial_inteligence.trainer.YOLOTrainer;
 import artificial_inteligence.utils.KMeansBoundingBoxFinder;
 import artificial_inteligence.utils.TrainFileIterator;
 import artificial_inteligence.utils.annotation.Annotation;
@@ -7,18 +8,26 @@ import artificial_inteligence.utils.xmls.BndBox;
 import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
+import artificial_inteligence.video.FaceDetector;
 import net.sf.javaml.clustering.KMeans;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.core.SparseInstance;
 import net.sf.javaml.distance.*;
+import nu.pattern.OpenCV;
+import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_java;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.deeplearning4j.api.storage.StatsStorage;
+import org.deeplearning4j.ui.api.UIServer;
+import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import utils.ConstantsManager;
 import utils.image.ImageOps;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
@@ -30,7 +39,32 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
-        new KMeansBoundingBoxFinder(5, 1000).getBoxes();
+        //Loader.load(opencv_java.class);
+
+        //annotateData();
+
+
+//        System.out.println("da");
+        new KMeansBoundingBoxFinder(9, 100).getBoxes();
+
+
+
+//        new FaceDetector().detectOnVideo(
+//                "C:\\Users\\Eduard\\Desktop\\Walking through the Matrix.mp4"
+//        );
+
+//        final StatsStorage statsStorage = new InMemoryStatsStorage();
+//        UIServer
+//                .getInstance()
+//                .attach(
+//                        statsStorage
+//                );
+//
+//        YOLOTrainer.getInstance().doTrain(statsStorage);
+
+        //new FaceDetector().play();
+
+
     }
 
     //        Loader.load(opencv_java.class);
@@ -72,6 +106,8 @@ public class Main {
 
     private static void annotateData() throws Exception {
 
+
+
         final ConstantsManager manager = ConstantsManager.getInstance();
 
         final String folderToProcess = manager.get("imageFolderName");
@@ -99,7 +135,7 @@ public class Main {
 
     }
 
-    private static  void checkAdnotaions() throws  Exception{
+    private static void checkAdnotaions() throws Exception {
         // loop through all the images from that specific folder
 
         final ConstantsManager manager = ConstantsManager.getInstance();

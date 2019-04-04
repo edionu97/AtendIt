@@ -1,5 +1,6 @@
 package artificial_inteligence.utils;
 
+import artificial_inteligence.trainer.YOLOTrainer;
 import artificial_inteligence.utils.annotation.Annotation;
 import artificial_inteligence.utils.annotation.IOldAnnotationParser;
 import artificial_inteligence.utils.annotation.OldAnnotationParser;
@@ -7,6 +8,8 @@ import artificial_inteligence.utils.xmls.BndBox;
 import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacpp.opencv_core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import utils.ConstantsManager;
@@ -64,6 +67,7 @@ public class TrainFileIterator {
     private void _parseTrainDirectory(
             final File file,
             final String imageDir, final  File annotationDir) throws Exception {
+
 
         // loop through all the images from that specific folder
         for (File image : Objects.requireNonNull(file.listFiles())) {
@@ -141,5 +145,5 @@ public class TrainFileIterator {
 
     private TrainImageResize resizer = new TrainImageResize();
 
-    private static  final int RESIZE_WIDTH = 416, RESIZE_HEIGHT = 416;
+    private static  final int RESIZE_WIDTH = YOLOTrainer.INPUT_WIDTH, RESIZE_HEIGHT = YOLOTrainer.INPUT_HEIGHT;
 }

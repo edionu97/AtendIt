@@ -2,20 +2,19 @@ package utils.image;
 
 import artificial_inteligence.utils.xmls.BndBox;
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 import utils.ConstantsManager;
 
 import javax.swing.*;
-import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;
 import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_imgproc.putText;
@@ -32,18 +31,20 @@ public class ImageOps {
             int x2 = obj.getXmax();
             int y2 = obj.getYmax();
 
+
             rectangle(
                     image,
                     new opencv_core.Point(x1, y1),
                     new opencv_core.Point(x2, y2),
-                    opencv_core.Scalar.RED
+                    opencv_core.Scalar.GREEN,
+                    2, 0, 0
             );
 
             if (!putText) {
                 continue;
             }
 
-            putText(image, "Face", new opencv_core.Point(x1 + 2, y2 - 2), 1, .8, opencv_core.Scalar.RED);
+            putText(image, "Face", new opencv_core.Point(x1 + 2, y2 - 2), 1, .8, opencv_core.Scalar.BLACK);
         }
     }
 
@@ -82,7 +83,7 @@ public class ImageOps {
 
     public static void displayImage(final Mat image) {
 
-        Image image1 = _Mat2BufferedImage(image);
+        Image image1 = Mat2BufferedImage(image);
 
         JFrame frame = new JFrame();
         frame.setLayout(new FlowLayout());
@@ -94,6 +95,7 @@ public class ImageOps {
         frame.setVisible(true);
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
 
     public  static  void displayImage(final opencv_core.Mat image){
 
@@ -119,7 +121,7 @@ public class ImageOps {
         return converter2.convert(converter1.convert(mat));
     }
 
-    private static BufferedImage _Mat2BufferedImage(Mat m) {
+    public static BufferedImage Mat2BufferedImage(Mat m) {
 
         int type = BufferedImage.TYPE_BYTE_GRAY;
 
