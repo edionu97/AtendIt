@@ -37,14 +37,14 @@ public class ImageOps {
                     new opencv_core.Point(x1, y1),
                     new opencv_core.Point(x2, y2),
                     opencv_core.Scalar.GREEN,
-                    2, 0, 0
+                    1, 0, 0
             );
 
             if (!putText) {
                 continue;
             }
 
-            putText(image, "Face", new opencv_core.Point(x1 + 2, y2 - 2), 1, .8, opencv_core.Scalar.BLACK);
+            putText(image, "Face", new opencv_core.Point(x1 + 2, y2 - 2), 1, .8, opencv_core.Scalar.GREEN);
         }
     }
 

@@ -45,13 +45,13 @@ public class Main {
 
 
 //        System.out.println("da");
-        new KMeansBoundingBoxFinder(9, 100).getBoxes();
+        //new KMeansBoundingBoxFinder(9, 100).getBoxes();
 
 
 
-//        new FaceDetector().detectOnVideo(
-//                "C:\\Users\\Eduard\\Desktop\\Walking through the Matrix.mp4"
-//        );
+        new FaceDetector().detectOnVideo(
+                "C:\\Users\\Eduard\\Desktop\\Personal\\Walking through the Matrix.mp4"
+        );
 
 //        final StatsStorage statsStorage = new InMemoryStatsStorage();
 //        UIServer

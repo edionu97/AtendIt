@@ -4,8 +4,8 @@
     <image-folder-name>images</image-folder-name>
     <image-file-parent-path>E:\Dataset</image-file-parent-path>
     <annotation-folder-path>E:Dataset\annotations</annotation-folder-path>
-    <old-annotation-folder-path>C:\Users\Eduard\Desktop\wider_face_train_bbx_gt.txt</old-annotation-folder-path>
-    <model-path>C:\Users\Eduard\Desktop\detection1_model.data</model-path>
+    <old-annotation-folder-path>C:\Users\Eduard\Desktop\Models\wider_face_train_bbx_gt.txt</old-annotation-folder-path>
+    <model-path>C:\Users\Eduard\Desktop\Models\detection2_model.data</model-path>
     <accepted-image-width>416</accepted-image-width>
     <accepted-image-height>416</accepted-image-height>
 </constants>
