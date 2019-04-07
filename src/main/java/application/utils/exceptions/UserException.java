@@ -1,12 +1,12 @@
 package application.utils.exceptions;
 
-public class UserExeception extends  Exception {
+public class UserException extends  Exception {
 
     /**
      * Custom exception thrown when a user exception appears
      * @param message: string representing the displayed message
      */
-    public UserExeception(String message){
+    public UserException(String message){
         super(message);
     }
 }

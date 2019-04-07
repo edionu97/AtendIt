@@ -49,9 +49,9 @@ public class Main {
 
 
 
-        new FaceDetector().detectOnVideo(
-                "C:\\Users\\Eduard\\Desktop\\Personal\\Walking through the Matrix.mp4"
-        );
+//        new FaceDetector().detectOnVideo(
+//                "C:\\Users\\Eduard\\Desktop\\Personal\\Walking through the Matrix.mp4"
+//        );
 
 //        final StatsStorage statsStorage = new InMemoryStatsStorage();
 //        UIServer
@@ -62,7 +62,7 @@ public class Main {
 //
 //        YOLOTrainer.getInstance().doTrain(statsStorage);
 
-        //new FaceDetector().play();
+        new FaceDetector().play();
 
 
     }

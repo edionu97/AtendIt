@@ -25,11 +25,19 @@ public class ClassConfigurator {
 
     @Bean
     public IDetector<ComputationGraph> detector() {
+
+//        if(1 == 1){
+//            return null;
+//        }
+
         return new YOLOModel();
     }
 
     @Bean
     public DetectionCropper cropper() {
+//        if(1 == 1){
+//            return null;
+//        }
         return new DetectionCropper(detector());
     }
 }

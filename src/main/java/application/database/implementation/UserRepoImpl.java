@@ -4,7 +4,7 @@ import application.database.interfaces.IUserRepo;
 import application.model.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import application.utils.exceptions.UserExeception;
+import application.utils.exceptions.UserException;
 import application.utils.persistence.HibernateUtils;
 
 import javax.persistence.NoResultException;
@@ -21,7 +21,7 @@ public class UserRepoImpl implements IUserRepo {
     }
 
     @Override
-    public void createAccount(String username, String password) throws UserExeception {
+    public void createAccount(String username, String password) throws UserException {
 
         try(Session session = persistenceUtils.getSessionFactory().openSession()){
 
@@ -32,7 +32,7 @@ public class UserRepoImpl implements IUserRepo {
                 transaction.commit();
             }catch (Exception e){
                 transaction.rollback();
-                throw  new UserExeception(e.getMessage());
+                throw  new UserException(e.getMessage());
             }
         }
     }
@@ -86,6 +86,20 @@ public class UserRepoImpl implements IUserRepo {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public void update(User user) {
+        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+            Transaction transaction = session.beginTransaction();
+            try{
+                session.saveOrUpdate(user);
+                transaction.commit();
+            }catch (Exception ex){
+                ex.printStackTrace();
+                transaction.rollback();
+            }
+        }
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import application.service.interfaces.IAuthService;
 import sun.misc.BASE64Encoder;
-import application.utils.exceptions.UserExeception;
+import application.utils.exceptions.UserException;
 
 
 @Component
@@ -45,7 +45,7 @@ public class AuthService implements IAuthService {
 
         try{
             this.userRepo.createAccount(username, password);
-        }catch (UserExeception e){
+        }catch (UserException e){
             return new AuthenticationResponse(
                     HttpStatus.IM_USED,
                     e.getMessage()

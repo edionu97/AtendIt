@@ -1,5 +1,6 @@
 package application.utils.persistence;
 
+import application.model.Profile;
 import application.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -38,6 +39,7 @@ public class HibernateUtils {
         sessionFactory = new Configuration()
                 .configure()
                 .addAnnotatedClass(User.class)
+                .addAnnotatedClass(Profile.class)
                 .buildSessionFactory();
     }
 

@@ -72,6 +72,15 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+        this.profile.setUser(this);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
@@ -87,4 +96,7 @@ public class User implements Serializable {
 
     @Column
     private UserRoles role;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Profile profile;
 }
