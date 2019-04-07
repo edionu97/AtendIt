@@ -60,7 +60,7 @@ public class ProfileController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/info")
+    @RequestMapping(method = RequestMethod.POST, value = "/info")
     public ResponseEntity<?> getProfile(@RequestBody GetProfileInfoMessage request){
 
         if(request.getUsername() == null){

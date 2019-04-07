@@ -4,6 +4,7 @@ package application.service;
 import application.database.interfaces.IUserRepo;
 import application.messages.request.AuthenticationMessage;
 import application.messages.response.AuthenticationResponse;
+import application.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component;
 import application.service.interfaces.IAuthService;
 import sun.misc.BASE64Encoder;
 import application.utils.exceptions.UserException;
+
+import java.util.Optional;
 
 
 @Component
@@ -56,6 +59,30 @@ public class AuthService implements IAuthService {
                 HttpStatus.OK,
                 "Account successfully created!"
         );
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword, String username) throws UserException {
+
+        Optional<User> user = userRepo.findUserByUsername(username);
+
+        if(!user.isPresent()){
+            throw  new UserException(String.format("User %s does not exist", username));
+        }
+
+        final User usr = user.get();
+
+        final String encodedPassword = encoder.encode(oldPassword.getBytes());
+
+        if(!encodedPassword.equals(usr.getPassword())){
+            throw  new UserException("Wrong password");
+        }
+
+        usr.setPassword(
+                encoder.encode(newPassword.getBytes())
+        );
+
+        userRepo.update(usr);
     }
 
     private IUserRepo userRepo;
