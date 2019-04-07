@@ -1,5 +1,8 @@
 package application.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -62,21 +65,26 @@ public class Profile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int profileId;
 
     @Column
+    @JsonProperty(value = "first")
     private String firstName;
 
     @Column
+    @JsonProperty(value = "last")
     private String lastName;
 
     @Column
     private String email;
 
     @Column
+    @JsonProperty(value = "phone")
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "userId")
+    @JsonIgnore
     private User user;
 }
