@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
+import java.util.Base64;
 import java.util.Optional;
 
 @Component
@@ -16,7 +17,7 @@ import java.util.Optional;
 public class ProfileService implements IProfileService {
 
     @Autowired
-    public ProfileService(IUserRepo userRepo){
+    public ProfileService(IUserRepo userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -25,13 +26,25 @@ public class ProfileService implements IProfileService {
 
         Optional<User> user = userRepo.findUserByUsername(username);
 
-        if(!user.isPresent()){
-            throw new  UserException(
+        if (!user.isPresent()) {
+            throw new UserException(
                     String.format("User %s not found", username)
             );
         }
 
-        return Optional.ofNullable(user.get().getProfile());
+        final Profile profile = user.get().getProfile();
+
+        if (profile == null) {
+            return Optional.empty();
+        }
+
+        if (profile.getImage() != null) {
+            profile.setImageType(
+                    profile.getImageType() + "," + Base64.getEncoder().encodeToString(profile.getImage())
+            );
+        }
+
+        return Optional.of(profile);
     }
 
     @Override
@@ -42,27 +55,59 @@ public class ProfileService implements IProfileService {
         );
 
         // Set only those values that are !=  null
-        if(firstName != null){
+        if (firstName != null) {
             profile.setFirstName(firstName);
         }
-        if(lastName != null){
+        if (lastName != null) {
             profile.setLastName(lastName);
         }
-        if(email != null){
+        if (email != null) {
             profile.setEmail(email);
         }
-        if(phoneNumber != null){
+        if (phoneNumber != null) {
             profile.setPhoneNumber(phoneNumber);
         }
 
+        profile.setImageType(
+                profile.getImageType().split(",")[0]
+        );
+
         User user = userRepo.findUserByUsername(username).orElse(null);
 
-        if(user == null){
+        if (user == null) {
             return;
         }
 
         user.setProfile(profile);
 
+        userRepo.update(user);
+    }
+
+    @Override
+    public void uploadProfileImage(String username, String base64EncodedImage) throws Exception {
+
+        Optional<Profile> optionalProfile = getUserProfile(username);
+
+        if (!optionalProfile.isPresent()) {
+            throw new Exception(String.format("Profile for user %s not found", username));
+        }
+
+        Optional<User> userOptional = userRepo.findUserByUsername(username);
+
+        if (!userOptional.isPresent()) {
+            throw new Exception(String.format("User %s does not exist", username));
+        }
+
+        String[] headerAndImage = base64EncodedImage.split(",");
+        byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(headerAndImage[1]);
+
+        final Profile profile = optionalProfile.get();
+
+        final User user = userOptional.get();
+
+        profile.setImage(imageBytes);
+        profile.setImageType(headerAndImage[0]);
+        user.setProfile(profile);
         userRepo.update(user);
     }
 

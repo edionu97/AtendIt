@@ -3,6 +3,7 @@ package application.controller;
 import application.messages.ErrorMessage;
 import application.messages.request.CreateUpdateMessage;
 import application.messages.request.GetProfileInfoMessage;
+import application.messages.request.UploadPictureMessage;
 import application.model.Profile;
 import application.service.interfaces.IProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,7 @@ public class ProfileController {
         try{
             profile = service.getUserProfile(request.getUsername()).orElse(null);
         }catch (Exception ex){
+            ex.printStackTrace();
             ErrorMessage message = new ErrorMessage(
                     HttpStatus.NOT_FOUND,
                     ex.getMessage()
@@ -82,6 +84,33 @@ public class ProfileController {
         }
 
         return new ResponseEntity<>(profile, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(method =RequestMethod.POST, value = "/upload-picture")
+    public  ResponseEntity<?> addPicture(@RequestBody UploadPictureMessage request){
+
+        if(request.getUsern() == null){
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Usern field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        try{
+            service.uploadProfileImage(
+                    request.getUsern(),
+                    request.getImage()
+            );
+        }catch (Exception ex){
+            ErrorMessage message = new ErrorMessage(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ex.getMessage()
+            );
+            return new ResponseEntity<>(message, message.getCode());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private IProfileService service;

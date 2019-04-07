@@ -63,6 +63,22 @@ public class Profile implements Serializable {
         this.user = user;
     }
 
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
@@ -87,4 +103,13 @@ public class Profile implements Serializable {
     @JoinColumn(name = "userId")
     @JsonIgnore
     private User user;
+
+    @Lob
+    @Column(name="image", columnDefinition="LONGBLOB")
+    @JsonIgnore
+    private byte[] image;
+
+    @Column(name = "type")
+    @JsonProperty(value = "image")
+    private String imageType;
 }

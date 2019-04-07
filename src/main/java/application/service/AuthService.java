@@ -75,7 +75,7 @@ public class AuthService implements IAuthService {
         final String encodedPassword = encoder.encode(oldPassword.getBytes());
 
         if(!encodedPassword.equals(usr.getPassword())){
-            throw  new UserException("Wrong password");
+            throw  new UserException("Password could not be changed: wrong password");
         }
 
         usr.setPassword(
