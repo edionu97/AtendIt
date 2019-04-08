@@ -32,6 +32,8 @@ public class ProfileService implements IProfileService {
             );
         }
 
+
+
         final Profile profile = user.get().getProfile();
 
         if (profile == null) {
@@ -68,9 +70,11 @@ public class ProfileService implements IProfileService {
             profile.setPhoneNumber(phoneNumber);
         }
 
-        profile.setImageType(
-                profile.getImageType().split(",")[0]
-        );
+        if(profile.getImageType() != null){
+            profile.setImageType(
+                    profile.getImageType().split(",")[0]
+            );
+        }
 
         User user = userRepo.findUserByUsername(username).orElse(null);
 
