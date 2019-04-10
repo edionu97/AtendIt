@@ -4,6 +4,7 @@
 out/
 result.txt
 *.jpg
+*.mp4
 
 gradle-app.setting
 

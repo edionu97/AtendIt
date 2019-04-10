@@ -48,4 +48,9 @@ dependencies {
     compile group: 'org.nd4j', name: 'nd4j-cuda-10.0-platform', version: '1.0.0-beta3'
     // https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-nn
     compile group: 'org.deeplearning4j', name: 'deeplearning4j-nn', version: '1.0.0-beta3'
+
+
+    // https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+
 }

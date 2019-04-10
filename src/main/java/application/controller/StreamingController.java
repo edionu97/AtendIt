@@ -1,20 +1,19 @@
 package application.controller;
 
 import application.messages.ErrorMessage;
-import application.messages.request.ImageMessage;
 import application.service.interfaces.IStreamingService;
-import com.mysql.cj.util.Base64Decoder;
-import org.apache.commons.io.FileUtils;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import utils.image.ImageOps;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import java.io.*;
+import java.util.Objects;
 
 
 @RestController
@@ -45,6 +44,24 @@ public class StreamingController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/update-left-right",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public  ResponseEntity<?> putLeftRight(
+            @RequestParam(name = "file") MultipartFile leftRightFile, @RequestParam("user") String username){
+
+
+        try(OutputStream outputStream = new FileOutputStream(new File(Objects.requireNonNull(leftRightFile.getOriginalFilename())))){
+
+            outputStream.write(leftRightFile.getBytes());
+        }catch (Exception ex){
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     private IStreamingService service;
 }
