@@ -50,12 +50,18 @@ public class StreamingController {
             value = "/update-left-right",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public  ResponseEntity<?> putLeftRight(
-            @RequestParam(name = "file") MultipartFile leftRightFile, @RequestParam("user") String username){
+            @RequestParam(name = "fileLeftRight") MultipartFile leftRightFile, @RequestParam("user") String username, @RequestParam(name="fileUpDown") MultipartFile upDownFile){
 
 
         try(OutputStream outputStream = new FileOutputStream(new File(Objects.requireNonNull(leftRightFile.getOriginalFilename())))){
 
             outputStream.write(leftRightFile.getBytes());
+        }catch (Exception ex){
+        }
+
+        try(OutputStream outputStream = new FileOutputStream(new File(Objects.requireNonNull(upDownFile.getOriginalFilename())))){
+
+            outputStream.write(upDownFile.getBytes());
         }catch (Exception ex){
         }
 
