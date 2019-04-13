@@ -5,6 +5,8 @@ import application.database.interfaces.IUserRepo;
 import artificial_inteligence.detector.IDetector;
 import artificial_inteligence.detector.YOLOModel;
 import artificial_inteligence.video.DetectionCropper;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacpp.opencv_java;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,19 +28,12 @@ public class ClassConfigurator {
 
     @Bean
     public IDetector<ComputationGraph> detector() {
-
-//        if(1 == 1){
-//            return null;
-//        }
-
+        Loader.load(opencv_java.class);
         return new YOLOModel();
     }
 
     @Bean
     public DetectionCropper cropper() {
-//        if(1 == 1){
-//            return null;
-//        }
         return new DetectionCropper(detector());
     }
 
