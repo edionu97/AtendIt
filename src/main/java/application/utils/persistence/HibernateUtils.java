@@ -1,5 +1,7 @@
 package application.utils.persistence;
 
+import application.model.Face;
+import application.model.FaceImage;
 import application.model.Profile;
 import application.model.User;
 import org.hibernate.SessionFactory;
@@ -40,6 +42,8 @@ public class HibernateUtils {
                 .configure()
                 .addAnnotatedClass(User.class)
                 .addAnnotatedClass(Profile.class)
+                .addAnnotatedClass(Face.class)
+                .addAnnotatedClass(FaceImage.class)
                 .buildSessionFactory();
     }
 

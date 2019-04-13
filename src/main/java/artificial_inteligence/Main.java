@@ -1,7 +1,9 @@
 package artificial_inteligence;
 
-import artificial_inteligence.trainer.YOLOTrainer;
-import artificial_inteligence.utils.KMeansBoundingBoxFinder;
+import application.database.implementation.UserRepoImpl;
+import application.model.FaceImage;
+import application.model.User;
+import application.utils.image_processing.VideoProcessor;
 import artificial_inteligence.utils.TrainFileIterator;
 import artificial_inteligence.utils.annotation.Annotation;
 import artificial_inteligence.utils.xmls.BndBox;
@@ -9,28 +11,24 @@ import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
 import artificial_inteligence.video.FaceDetector;
-import net.sf.javaml.clustering.KMeans;
-import net.sf.javaml.core.Dataset;
-import net.sf.javaml.core.DefaultDataset;
-import net.sf.javaml.core.Instance;
-import net.sf.javaml.core.SparseInstance;
-import net.sf.javaml.distance.*;
-import nu.pattern.OpenCV;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_java;
+import org.bytedeco.javacv.Java2DFrameUtils;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.deeplearning4j.api.storage.StatsStorage;
-import org.deeplearning4j.ui.api.UIServer;
-import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 import utils.ConstantsManager;
 import utils.image.ImageOps;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import java.awt.image.DataBufferByte;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,6 +37,27 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
+        Loader.load(opencv_java.class);
+
+        UserRepoImpl repo = new UserRepoImpl();
+
+        final User user = repo.findUserByUsername("edi").get();
+
+        final FaceImage arr = user.getFace().getFaces().get(0);
+
+        ImageOps.displayImage(
+                ImageOps.bytes2Mat(
+                        arr.getImage(),
+                        arr.getHeight(),
+                        arr.getWidth(),
+                        arr.getType()
+                )
+        );
+
+
+    }
+
+    private static void doSmth() throws Exception {
         //Loader.load(opencv_java.class);
 
         //annotateData();
@@ -46,7 +65,6 @@ public class Main {
 
 //        System.out.println("da");
         //new KMeansBoundingBoxFinder(9, 100).getBoxes();
-
 
 
 //        new FaceDetector().detectOnVideo(
@@ -62,12 +80,8 @@ public class Main {
 //
 //        YOLOTrainer.getInstance().doTrain(statsStorage);
 
-        new FaceDetector().play();
 
-
-    }
-
-    //        Loader.load(opencv_java.class);
+        //        Loader.load(opencv_java.class);
 //////
 //        Mat img = Imgcodecs.imread(
 //                "C:\\Users\\Eduard\\Desktop\\test.jpg"
@@ -88,9 +102,9 @@ public class Main {
 //                img
 //        );
 
-    //ImageOps.displayImage(img);
+        //ImageOps.displayImage(img);
 
-    //annotateData();
+        //annotateData();
 
 //        final StatsStorage statsStorage = new InMemoryStatsStorage();
 //        UIServer
@@ -101,11 +115,15 @@ public class Main {
 //
 //        YOLOTrainer.getInstance().doTrain(statsStorage);
 
-    //new FaceDetector().play();
+        //new FaceDetector().play();
+
+
+        new FaceDetector().play();
+
+    }
 
 
     private static void annotateData() throws Exception {
-
 
 
         final ConstantsManager manager = ConstantsManager.getInstance();

@@ -81,6 +81,10 @@ public class User implements Serializable {
         this.profile.setUser(this);
     }
 
+    public Face getFace() {
+        return face;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
@@ -89,6 +93,11 @@ public class User implements Serializable {
     @Column
     @JsonProperty("passwd")
     private String password;
+
+    public void setFace(Face face) {
+        this.face = face;
+        this.face.setUser(this);
+    }
 
     @Column
     @JsonProperty("usern")
@@ -99,4 +108,8 @@ public class User implements Serializable {
 
     @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Profile profile;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Face face;
 }
