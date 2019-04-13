@@ -1,6 +1,8 @@
 package application.config;
 
+import application.database.implementation.FaceImagesRepoImpl;
 import application.database.implementation.UserRepoImpl;
+import application.database.interfaces.IFaceImagesRepo;
 import application.database.interfaces.IUserRepo;
 import artificial_inteligence.detector.IDetector;
 import artificial_inteligence.detector.YOLOModel;
@@ -19,6 +21,13 @@ public class ClassConfigurator {
     @Bean
     public IUserRepo userRepo() {
         return new UserRepoImpl();
+    }
+
+    @Bean
+    public IFaceImagesRepo faceImagesRepo(){
+        return  new FaceImagesRepoImpl(
+                userRepo()
+        );
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package application.service;
 
+import application.database.interfaces.IFaceImagesRepo;
 import application.database.interfaces.IUserRepo;
 import application.model.Face;
 import application.model.FaceImage;
@@ -36,10 +37,12 @@ public class StreamingService implements IStreamingService {
     @Autowired
     public StreamingService(
             final DetectionCropper cropper,
-            final IUserRepo userRepo
+            final IUserRepo userRepo,
+            final IFaceImagesRepo faceImagesRepo
     ) {
         this.userRepo = userRepo;
         this.cropper = cropper;
+        this.faceImagesRepo = faceImagesRepo;
     }
 
     @Override
@@ -76,6 +79,8 @@ public class StreamingService implements IStreamingService {
     @Override
     public void uploadUserVideo(final byte[] leftRight, final String username, final byte[] upDown) throws Exception {
 
+        userFaces = new ArrayList<>();
+
         final VideoProcessor leftRightProcessor = new VideoProcessor();
         final VideoProcessor upDownProcessor = new VideoProcessor();
 
@@ -98,7 +103,7 @@ public class StreamingService implements IStreamingService {
         final int FRAMES_PER_SEC = (frames.size() / PHONE_REGISTER_TIME);
 
         // jump over FRAMES_PER_SEC / REDUCTION_RATE frames from each step
-        for (int i = 1; i <= frames.size(); i += (FRAMES_PER_SEC / REDUCTION_RATE)) {
+        for (int i = 0; i < frames.size(); i += (FRAMES_PER_SEC / REDUCTION_RATE)) {
 
             final opencv_core.Mat frame = frames.get(i);
             final List<Mat> faces = cropper.getDetectedObjects(frame, .4);
@@ -111,6 +116,11 @@ public class StreamingService implements IStreamingService {
     }
 
     private void _setFaces(final String username) throws Exception {
+
+        // delete previous face images if now there are some new images
+        if(!userFaces.isEmpty()){
+            faceImagesRepo.deleteAll(username);
+        }
 
         final Optional<User> userOpt = userRepo.findUserByUsername(username);
 
@@ -155,5 +165,6 @@ public class StreamingService implements IStreamingService {
 
     private final DetectionCropper cropper;
     private final IUserRepo userRepo;
-    private final List<Mat> userFaces = new ArrayList<>();
+    private final IFaceImagesRepo faceImagesRepo;
+    private List<Mat> userFaces;
 }

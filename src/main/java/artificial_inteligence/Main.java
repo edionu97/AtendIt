@@ -1,6 +1,8 @@
 package artificial_inteligence;
 
+import application.config.ClassConfigurator;
 import application.database.implementation.UserRepoImpl;
+import application.database.interfaces.IFaceImagesRepo;
 import application.model.FaceImage;
 import application.model.User;
 import application.utils.image_processing.VideoProcessor;
@@ -20,6 +22,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import utils.ConstantsManager;
 import utils.image.ImageOps;
 
@@ -37,22 +40,28 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
-        Loader.load(opencv_java.class);
+//        Loader.load(opencv_java.class);
+//
+//        UserRepoImpl repo = new UserRepoImpl();
+//
+//        final User user = repo.findUserByUsername("edi").get();
+//
+//        final FaceImage arr = user.getFace().getFaces().get(0);
+//
+//        ImageOps.displayImage(
+//                ImageOps.bytes2Mat(
+//                        arr.getImage(),
+//                        arr.getHeight(),
+//                        arr.getWidth(),
+//                        arr.getType()
+//                )
+//        );
 
-        UserRepoImpl repo = new UserRepoImpl();
+        IFaceImagesRepo repo = new AnnotationConfigApplicationContext(ClassConfigurator.class).getBean(IFaceImagesRepo.class);
 
-        final User user = repo.findUserByUsername("edi").get();
 
-        final FaceImage arr = user.getFace().getFaces().get(0);
-
-        ImageOps.displayImage(
-                ImageOps.bytes2Mat(
-                        arr.getImage(),
-                        arr.getHeight(),
-                        arr.getWidth(),
-                        arr.getType()
-                )
-        );
+        //repo.deleteAll("oni");
+        //repo.deleteAll("edi");
 
 
     }
