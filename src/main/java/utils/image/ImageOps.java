@@ -80,7 +80,6 @@ public class ImageOps {
         );
     }
 
-
     public static void displayImage(final Mat image) {
 
         Image image1 = Mat2BufferedImage(image);
@@ -95,7 +94,6 @@ public class ImageOps {
         frame.setVisible(true);
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
 
     public  static  void displayImage(final opencv_core.Mat image){
 
@@ -142,6 +140,17 @@ public class ImageOps {
         return image;
     }
 
-    private static ConstantsManager manager = ConstantsManager.getInstance();
 
+    public static byte[] convertMat2ByteArray(final Mat mat){
+        final byte[] bytes = new byte[(int)(mat.total() * mat.channels())];
+        mat.get(0,0, bytes);
+        return bytes;
+    }
+
+
+    public static Mat bytes2Mat(final byte[] bytes, final int height, final int width, final int type){
+        final Mat mat = new Mat(height, width, type);
+        mat.put(0,0, bytes);
+        return mat;
+    }
 }
