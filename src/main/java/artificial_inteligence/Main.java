@@ -3,6 +3,7 @@ package artificial_inteligence;
 import application.config.ClassConfigurator;
 import application.database.implementation.UserRepoImpl;
 import application.database.interfaces.IFaceImagesRepo;
+import application.model.Face;
 import application.model.FaceImage;
 import application.model.User;
 import application.utils.image_processing.VideoProcessor;
@@ -63,6 +64,7 @@ public class Main {
         //repo.deleteAll("oni");
         //repo.deleteAll("edi");
 
+        new FaceDetector().play();
 
     }
 
