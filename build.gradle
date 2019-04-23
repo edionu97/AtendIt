@@ -53,4 +53,13 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
     compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
 
+    // https://mvnrepository.com/artifact/org.springframework/spring-websocket
+    compile group: 'org.springframework', name: 'spring-websocket', version: '5.0.9.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-messaging
+    compile group: 'org.springframework', name: 'spring-messaging', version: '5.0.9.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
+    compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.0.9.RELEASE'
+
 }
