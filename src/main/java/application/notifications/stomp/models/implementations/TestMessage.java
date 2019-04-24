@@ -1,6 +1,6 @@
-package application.notifications.models.implementations;
+package application.notifications.stomp.models.implementations;
 
-import application.notifications.models.IMessage;
+import application.notifications.stomp.models.IMessage;
 
 public class TestMessage implements IMessage {
 

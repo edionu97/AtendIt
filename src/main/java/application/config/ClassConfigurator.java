@@ -37,6 +37,11 @@ public class ClassConfigurator {
 
     @Bean
     public IDetector<ComputationGraph> detector() {
+
+//        if(1 == 1){
+//            return null;
+//        }
+
         Loader.load(opencv_java.class);
         return new YOLOModel();
     }

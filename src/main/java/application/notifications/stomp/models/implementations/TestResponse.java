@@ -1,6 +1,6 @@
-package application.notifications.models.implementations;
+package application.notifications.stomp.models.implementations;
 
-import application.notifications.models.IResponse;
+import application.notifications.stomp.models.IResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TestResponse implements IResponse {

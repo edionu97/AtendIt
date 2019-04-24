@@ -1,15 +1,14 @@
-package application.notifications.controllers;
+package application.notifications.stomp.controllers;
 
-import application.notifications.models.IResponse;
-import application.notifications.models.implementations.TestMessage;
-import application.notifications.models.implementations.TestResponse;
+import application.notifications.stomp.models.IResponse;
+import application.notifications.stomp.models.implementations.TestMessage;
+import application.notifications.stomp.models.implementations.TestResponse;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
 
 
-@Controller
+//@Controller
 public class WebSocketController {
 
     /**

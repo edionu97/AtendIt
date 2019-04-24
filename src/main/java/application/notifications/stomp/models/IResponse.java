@@ -1,4 +1,4 @@
-package application.notifications.models;
+package application.notifications.stomp.models;
 
 import java.io.Serializable;
 
