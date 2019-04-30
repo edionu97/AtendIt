@@ -69,5 +69,27 @@ public class CourseService implements ICourseService {
         return new ArrayList<>(user.getCourses());
     }
 
+    @Override
+    public Optional<Course> findCourseBy(
+            final String username, final String name, final ClassType type) {
+
+        Optional<User> userOptional = userRepo.findUserByUsername(username);
+        if(!userOptional.isPresent()){
+            return Optional.empty();
+        }
+
+        final User user = userOptional.get();
+        if(!user.getRole().equals(UserRoles.TEACHER)){
+            return Optional.empty();
+        }
+
+        return user
+                .getCourses()
+                .stream()
+                .filter(
+                        x -> x.getName().equals(name) && x.getType().equals(type)
+                ).findFirst();
+    }
+
     private IUserRepo userRepo;
 }

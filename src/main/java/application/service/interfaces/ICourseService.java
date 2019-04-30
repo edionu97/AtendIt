@@ -4,6 +4,7 @@ import application.model.Course;
 import application.utils.model.ClassType;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ICourseService {
 
@@ -23,5 +24,11 @@ public interface ICourseService {
      * Returns a list with all courses proposed by user with username = @param username
      */
     List<Course> getCoursesFor(final String username);
+
+    /**
+        Return a specific user course
+     */
+    Optional<Course> findCourseBy(
+            final String username, final String name, final ClassType type);
 
 }
