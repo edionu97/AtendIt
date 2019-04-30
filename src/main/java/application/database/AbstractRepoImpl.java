@@ -38,6 +38,5 @@ public abstract class AbstractRepoImpl<T>  {
         }
     }
 
-
     protected HibernateUtils persistenceUtils;
 }

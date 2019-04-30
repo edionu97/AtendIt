@@ -1,8 +1,10 @@
 package application.config;
 
+import application.database.implementation.AttendanceRepoImpl;
 import application.database.implementation.EnrollmentRepoImpl;
 import application.database.implementation.FaceImagesRepoImpl;
 import application.database.implementation.UserRepoImpl;
+import application.database.interfaces.IAttendanceRepo;
 import application.database.interfaces.IEnrollmentRepo;
 import application.database.interfaces.IFaceImagesRepo;
 import application.database.interfaces.IUserRepo;
@@ -35,6 +37,11 @@ public class ClassConfigurator {
     @Bean
     public IEnrollmentRepo enrollmentRepo(){
         return  new EnrollmentRepoImpl();
+    }
+
+    @Bean
+    public IAttendanceRepo attendanceRepo(){
+        return  new AttendanceRepoImpl();
     }
 
     @Bean

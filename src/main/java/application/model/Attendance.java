@@ -1,14 +1,21 @@
 package application.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
 public class Attendance implements Serializable {
 
     public Attendance() {
+    }
+
+    public Attendance(User user, Course course) {
+        this.user = user;
+        this.course = course;
     }
 
     @Override
@@ -56,6 +63,8 @@ public class Attendance implements Serializable {
     private int attendanceId;
 
     @Column
+    @CreationTimestamp
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date attendanceDate;
 
     @ManyToOne
