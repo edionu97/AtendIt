@@ -75,11 +75,13 @@ public class EnrollmentService implements IEnrollmentService {
             );
         }
 
-        if(!courseOptional.isPresent()){
+        if(!courseOptional.isPresent()) {
+
             throw  new Exception(
-                    String.format("Course (%s, %s, %s) not found", teacherName, courseName, type)
+                    String.format("Course: (%s, %s, %s) not found", teacherName, courseName, type)
             );
         }
+
 
         final Optional<Enrollment> enrollment = enrollmentRepo.findEnrollmentByUserAndCourse(
                 studentOptional.get(), courseOptional.get()
@@ -95,6 +97,19 @@ public class EnrollmentService implements IEnrollmentService {
         }
 
         enrollmentRepo.delete(enrollment.get());
+    }
+
+    @Override
+    public boolean isEnrolledAtCourse(String studentName, String courseName, ClassType type, String teacherName) {
+
+        final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
+
+        final Optional<Course> courseOptional = courseService.findCourseBy(
+                teacherName, courseName, type
+        );
+
+        return studentOptional.filter(user -> courseOptional.filter(course -> enrollmentRepo.findEnrollmentByUserAndCourse(user, course).isPresent()).isPresent()).isPresent();
+
     }
 
     @Override

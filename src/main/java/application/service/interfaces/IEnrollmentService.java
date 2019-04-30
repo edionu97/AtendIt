@@ -31,6 +31,11 @@ public interface IEnrollmentService {
 
 
     /**
+     * Returns true if student is enrolled at course
+     */
+    boolean isEnrolledAtCourse(final  String studentName, final String courseName, final ClassType type, final String teacherName);
+
+    /**
      * Returns all student enrollments
      * @param studentName: the name of the student
      * @return a list of values
