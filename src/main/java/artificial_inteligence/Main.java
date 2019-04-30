@@ -58,7 +58,7 @@ public class Main {
 //                )
 //        );
 
-        IFaceImagesRepo repo = new AnnotationConfigApplicationContext(ClassConfigurator.class).getBean(IFaceImagesRepo.class);
+        //IFaceImagesRepo repo = new AnnotationConfigApplicationContext(ClassConfigurator.class).getBean(IFaceImagesRepo.class);
 
 
         //repo.deleteAll("oni");

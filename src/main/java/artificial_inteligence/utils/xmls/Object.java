@@ -88,7 +88,7 @@ public class Object {
     }
 
 
-    /// Class fields
+    /// StudentClass fields
     private String pose;
     private String name;
     private BndBox bndbox;

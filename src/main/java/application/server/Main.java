@@ -10,6 +10,5 @@ public class Main {
         new SpringApplicationBuilder(Main.class)
                 .headless(false)
                 .run(args);
-        //SpringApplication.run(Main.class, args);
     }
 }

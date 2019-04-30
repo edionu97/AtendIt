@@ -54,7 +54,7 @@ public class Size {
         return width;
     }
 
-    //Class fields
+    //StudentClass fields
     private int width;
     private int height;
     private int depth;

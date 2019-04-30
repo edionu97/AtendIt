@@ -69,7 +69,7 @@ public class BndBox {
         return xmin;
     }
 
-    /// Class fields
+    /// StudentClass fields
     private int xmin;
     private int xmax;
     private int ymin;

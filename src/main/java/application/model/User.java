@@ -3,8 +3,11 @@ package application.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import application.utils.model.UserRoles;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -85,6 +88,38 @@ public class User implements Serializable {
         return face;
     }
 
+    public void setFace(Face face) {
+        this.face = face;
+        this.face.setUser(this);
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        courses.forEach(course -> course.setUser(this));
+        this.courses = courses;
+    }
+
+    public Set<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(Set<Enrollment> enrollments) {
+        enrollments.forEach(enrollment -> enrollment.setUser(this));
+        this.enrollments = enrollments;
+    }
+
+    public Set<Attendance> getAttendances() {
+        return attendances;
+    }
+
+    public void setAttendances(Set<Attendance> attendances) {
+        attendances.forEach(attendance -> attendance.setUser(this));
+        this.attendances = attendances;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
@@ -93,11 +128,6 @@ public class User implements Serializable {
     @Column
     @JsonProperty("passwd")
     private String password;
-
-    public void setFace(Face face) {
-        this.face = face;
-        this.face.setUser(this);
-    }
 
     @Column
     @JsonProperty("usern")
@@ -112,4 +142,16 @@ public class User implements Serializable {
     @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
     private Face face;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Course> courses = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Enrollment> enrollments = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Attendance> attendances = new HashSet<>();
 }
