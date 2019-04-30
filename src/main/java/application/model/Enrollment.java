@@ -18,11 +18,6 @@ import java.util.Objects;
 )
 public class Enrollment implements Serializable {
 
-    public Enrollment(String group, User user) {
-        this.group = group;
-        this.user = user;
-    }
-
     public Enrollment() {
     }
 

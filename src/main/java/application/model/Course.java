@@ -34,15 +34,12 @@ public class Course implements Serializable {
         Course course = (Course) o;
         return getCourseId() == course.getCourseId() &&
                 Objects.equals(getName(), course.getName()) &&
-                getType() == course.getType() &&
-                Objects.equals(getUser(), course.getUser()) &&
-                Objects.equals(getEnrollments(), course.getEnrollments()) &&
-                Objects.equals(getAttendances(), course.getAttendances());
+                getType() == course.getType() && user.equals(course.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCourseId(), getName(), getType(), getUser(), getEnrollments(), getAttendances());
+        return Objects.hash(getCourseId(), getName(), getType());
     }
 
     public int getCourseId() {

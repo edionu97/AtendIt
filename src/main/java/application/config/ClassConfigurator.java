@@ -1,7 +1,9 @@
 package application.config;
 
+import application.database.implementation.EnrollmentRepoImpl;
 import application.database.implementation.FaceImagesRepoImpl;
 import application.database.implementation.UserRepoImpl;
+import application.database.interfaces.IEnrollmentRepo;
 import application.database.interfaces.IFaceImagesRepo;
 import application.database.interfaces.IUserRepo;
 import artificial_inteligence.detector.IDetector;
@@ -28,6 +30,11 @@ public class ClassConfigurator {
         return  new FaceImagesRepoImpl(
                 userRepo()
         );
+    }
+
+    @Bean
+    public IEnrollmentRepo enrollmentRepo(){
+        return  new EnrollmentRepoImpl();
     }
 
     @Bean
