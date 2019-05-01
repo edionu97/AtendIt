@@ -74,7 +74,7 @@ public class AttendanceService implements IAttendanceService {
 
         if (!enrollmentService.isEnrolledAtCourse(studentName, courseName, type, teacherName)) {
             throw new ErrorMessageException(
-                    String.format("Course (%s, %s, %s) not found", teacherName, courseName, type),
+                    String.format("Student %s must enroll first at course (%s, %s, %s)", studentName, teacherName, courseName, type),
                     HttpStatus.FORBIDDEN
             );
         }
