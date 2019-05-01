@@ -2,18 +2,22 @@ package application.service;
 
 import application.database.interfaces.IEnrollmentRepo;
 import application.database.interfaces.IUserRepo;
+import application.messages.ErrorMessage;
 import application.model.Course;
 import application.model.Enrollment;
 import application.model.User;
 import application.service.interfaces.ICourseService;
 import application.service.interfaces.IEnrollmentService;
+import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @ComponentScan(
@@ -33,14 +37,14 @@ public class EnrollmentService implements IEnrollmentService {
 
     @Override
     public void addEnrollment(
-            final String studentName, final String courseName, final ClassType type, final String teacherName, final String group) throws Exception {
+            final String studentName, final String courseName, final ClassType type, final String teacherName, final String group) throws ErrorMessageException {
 
 
         final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
 
-        if(!studentOptional.isPresent()){
-            throw  new Exception(
-                    String.format("User with username: %s not found", studentName)
+        if (!studentOptional.isPresent()) {
+            throw new ErrorMessageException(
+                    String.format("User with username: %s not found", studentName), HttpStatus.NOT_FOUND
             );
         }
 
@@ -48,9 +52,9 @@ public class EnrollmentService implements IEnrollmentService {
                 teacherName, courseName, type
         );
 
-        if(!courseOptional.isPresent()){
-            throw  new Exception(
-                    String.format("Course (%s, %s, %s) not found", teacherName, courseName, type)
+        if (!courseOptional.isPresent()) {
+            throw new ErrorMessageException(
+                    String.format("Course (%s, %s, %s) not found", teacherName, courseName, type), HttpStatus.NOT_FOUND
             );
         }
 
@@ -61,7 +65,7 @@ public class EnrollmentService implements IEnrollmentService {
 
     @Override
     public void deleteEnrollment(
-            final String studentName, final String courseName, final ClassType type, final String teacherName) throws Exception {
+            final String studentName, final String courseName, final ClassType type, final String teacherName) throws ErrorMessageException {
 
         final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
 
@@ -69,16 +73,16 @@ public class EnrollmentService implements IEnrollmentService {
                 teacherName, courseName, type
         );
 
-        if(!studentOptional.isPresent()){
-            throw  new Exception(
-                    String.format("User with username: %s not found", studentName)
+        if (!studentOptional.isPresent()) {
+            throw new ErrorMessageException(
+                    String.format("User with username: %s not found", studentName), HttpStatus.NOT_FOUND
             );
         }
 
-        if(!courseOptional.isPresent()) {
+        if (!courseOptional.isPresent()) {
 
-            throw  new Exception(
-                    String.format("Course: (%s, %s, %s) not found", teacherName, courseName, type)
+            throw new ErrorMessageException(
+                    String.format("Course: (%s, %s, %s) not found", teacherName, courseName, type), HttpStatus.NOT_FOUND
             );
         }
 
@@ -87,12 +91,12 @@ public class EnrollmentService implements IEnrollmentService {
                 studentOptional.get(), courseOptional.get()
         );
 
-        if(!enrollment.isPresent()){
-            throw  new Exception(
+        if (!enrollment.isPresent()) {
+            throw new ErrorMessageException(
                     String.format(
                             "Enrollment not found for user %s at (%s, %s, %s)",
                             studentName, teacherName, courseName, type
-                    )
+                    ), HttpStatus.NOT_FOUND
             );
         }
 
@@ -114,7 +118,13 @@ public class EnrollmentService implements IEnrollmentService {
 
     @Override
     public List<Enrollment> getEnrollmentsFor(final String studentName) {
-        return enrollmentRepo.getEnrollmentsFor(studentName);
+        return enrollmentRepo
+                .getEnrollmentsFor(studentName)
+                .stream()
+                .peek(
+                        enrollment -> enrollment.getCourse().getUser().setPassword(null)
+                )
+                .collect(Collectors.toList());
     }
 
 

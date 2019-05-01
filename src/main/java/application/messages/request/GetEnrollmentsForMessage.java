@@ -1,0 +1,19 @@
+package application.messages.request;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
+
+public class GetEnrollmentsForMessage implements Serializable {
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @JsonProperty(value = "student")
+    private String username;
+}

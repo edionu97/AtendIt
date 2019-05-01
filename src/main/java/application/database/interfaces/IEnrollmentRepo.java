@@ -4,7 +4,6 @@ import application.model.Course;
 import application.model.Enrollment;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
-import application.utils.model.ClassType;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +18,12 @@ public interface IEnrollmentRepo {
      * @throws Exception: if something went wrong
      */
     void addEnrollment(
-            final User student, final Course course, final String group) throws  Exception;
+            final User student, final Course course, final String group) throws  ErrorMessageException;
 
     /*
         Delete the enrollment
      */
-    void delete(final Enrollment enrollment) throws  Exception;
+    void delete(final Enrollment enrollment) throws  ErrorMessageException;
 
     /**
      * Update the enrollment

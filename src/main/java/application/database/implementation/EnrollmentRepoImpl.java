@@ -5,8 +5,10 @@ import application.database.interfaces.IEnrollmentRepo;
 import application.model.Course;
 import application.model.Enrollment;
 import application.model.User;
+import application.utils.exceptions.ErrorMessageException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,7 +20,7 @@ import java.util.Optional;
 public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements IEnrollmentRepo {
 
     @Override
-    public void addEnrollment(final User student, final Course course, final String group) throws Exception {
+    public void addEnrollment(final User student, final Course course, final String group) throws ErrorMessageException {
 
         final Enrollment enrollment = new Enrollment(group);
         enrollment.setCourse(course);
@@ -33,7 +35,7 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
                 transaction.commit();
             } catch (Exception e) {
                 transaction.rollback();
-                throw new Exception(e.getMessage());
+                throw new ErrorMessageException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
