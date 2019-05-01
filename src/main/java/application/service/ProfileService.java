@@ -4,9 +4,10 @@ import application.database.interfaces.IUserRepo;
 import application.model.Profile;
 import application.model.User;
 import application.service.interfaces.IProfileService;
-import application.utils.exceptions.UserException;
+import application.utils.exceptions.ErrorMessageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
@@ -22,17 +23,15 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public Optional<Profile> getUserProfile(String username) throws UserException {
+    public Optional<Profile> getUserProfile(String username) throws ErrorMessageException {
 
         Optional<User> user = userRepo.findUserByUsername(username);
 
         if (!user.isPresent()) {
-            throw new UserException(
-                    String.format("User %s not found", username)
+            throw  new ErrorMessageException(
+                    String.format("User %s not found", username), HttpStatus.NOT_FOUND
             );
         }
-
-
 
         final Profile profile = user.get().getProfile();
 
@@ -50,7 +49,7 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public void createOrUpdate(String username, String email, String firstName, String lastName, String phoneNumber) throws UserException {
+    public void createOrUpdate(String username, String email, String firstName, String lastName, String phoneNumber) throws ErrorMessageException {
 
         Profile profile = getUserProfile(username).orElseGet(
                 () -> new Profile(firstName, lastName, email, phoneNumber)
@@ -88,18 +87,22 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public void uploadProfileImage(String username, String base64EncodedImage) throws Exception {
+    public void uploadProfileImage(String username, String base64EncodedImage) throws ErrorMessageException {
 
         Optional<Profile> optionalProfile = getUserProfile(username);
 
         if (!optionalProfile.isPresent()) {
-            throw new Exception(String.format("Profile for user %s not found", username));
+            throw  new ErrorMessageException(
+                    String.format("Profile for user %s not found", username), HttpStatus.NOT_FOUND
+            );
         }
 
         Optional<User> userOptional = userRepo.findUserByUsername(username);
 
         if (!userOptional.isPresent()) {
-            throw new Exception(String.format("User %s does not exist", username));
+            throw  new ErrorMessageException(
+                    String.format("User %s does not exist", username), HttpStatus.NOT_FOUND
+            );
         }
 
         String[] headerAndImage = base64EncodedImage.split(",");

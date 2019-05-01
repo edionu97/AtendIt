@@ -3,15 +3,18 @@ package application.service;
 import application.database.interfaces.IAttendanceRepo;
 import application.database.interfaces.IEnrollmentRepo;
 import application.database.interfaces.IUserRepo;
+import application.messages.ErrorMessage;
 import application.model.Attendance;
 import application.model.Course;
 import application.model.User;
 import application.service.interfaces.IAttendanceService;
 import application.service.interfaces.ICourseService;
 import application.service.interfaces.IEnrollmentService;
+import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -36,7 +39,15 @@ public class AttendanceService implements IAttendanceService {
     }
 
     @Override
-    public void addAttendance(String studentName, String courseName, ClassType type, String teacherName) throws Exception {
+    public boolean hasFaceSet(final String username) {
+        return userRepo
+                .findUserByUsername(username)
+                .filter(user -> user.getFace() != null)
+                .isPresent();
+    }
+
+    @Override
+    public void addAttendance(String studentName, String courseName, ClassType type, String teacherName) throws ErrorMessageException {
 
         final Optional<Course> courseOptional = courseService.findCourseBy(
                 teacherName, courseName, type
@@ -45,20 +56,24 @@ public class AttendanceService implements IAttendanceService {
         final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
 
         if (!studentOptional.isPresent()) {
-            throw new Exception(
-                    String.format("User with username: %s not found", studentName)
+            throw new ErrorMessageException(
+                    String.format("User with username: %s not found", studentName), HttpStatus.NOT_FOUND
             );
         }
 
         if (!courseOptional.isPresent()) {
-            throw new Exception(
-                    String.format("Course (%s, %s, %s) not found", teacherName, courseName, type)
+            throw new ErrorMessageException(
+                    String.format("Course (%s, %s, %s) not found", teacherName, courseName, type),
+                    HttpStatus.NOT_FOUND
             );
         }
 
 
         if (!enrollmentService.isEnrolledAtCourse(studentName, courseName, type, teacherName)) {
-            throw new Exception("Please enroll to this course");
+            throw new ErrorMessageException(
+                    String.format("Course (%s, %s, %s) not found", teacherName, courseName, type),
+                    HttpStatus.FORBIDDEN
+            );
         }
 
         attendanceRepo.addAttendance(
@@ -67,19 +82,19 @@ public class AttendanceService implements IAttendanceService {
     }
 
     @Override
-    public void delete(int attendanceId) throws Exception {
+    public void delete(int attendanceId) throws ErrorMessageException {
 
         final Optional<Attendance> attendance = attendanceRepo.findById(attendanceId);
 
         if (!attendance.isPresent()) {
-            throw new Exception("Attendance not found!");
+            throw new ErrorMessageException("Attendance not found", HttpStatus.NOT_FOUND);
         }
 
         attendanceRepo.delete(attendance.get());
     }
 
     @Override
-    public void update(Attendance attendance) {
+    public void update(Attendance attendance) throws  ErrorMessageException {
         attendanceRepo.update(attendance);
     }
 

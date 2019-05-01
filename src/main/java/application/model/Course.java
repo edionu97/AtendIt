@@ -2,6 +2,7 @@ package application.model;
 
 
 import application.utils.model.ClassType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -103,9 +104,10 @@ public class Course implements Serializable {
     private User user;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Enrollment> enrollments = new HashSet<>();
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Attendance> attendances = new HashSet<>();
-
 }

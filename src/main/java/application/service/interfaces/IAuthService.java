@@ -2,7 +2,7 @@ package application.service.interfaces;
 
 import application.messages.request.AuthenticationMessage;
 import application.messages.response.AuthenticationResponse;
-import application.utils.exceptions.UserException;
+import application.utils.exceptions.ErrorMessageException;
 
 public interface  IAuthService {
 
@@ -26,7 +26,7 @@ public interface  IAuthService {
      * @param oldPassword: the old password
      * @param newPassword: the new password
      * @param username: the username of the user that want to change it's password
-     * @throws UserException if oldPassword is not corresponding to saved old password
+     * @throws ErrorMessageException if oldPassword is not corresponding to saved old password
      */
-    void changePassword(String oldPassword, String newPassword, String username) throws UserException;
+    void changePassword(String oldPassword, String newPassword, String username) throws ErrorMessageException;
 }

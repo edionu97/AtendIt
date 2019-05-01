@@ -1,6 +1,7 @@
 package application.service.interfaces;
 
 import application.model.Course;
+import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 
 import java.util.List;
@@ -14,10 +15,10 @@ public interface ICourseService {
      * @param username: teacher's username
      * @param courseName: name of the course
      * @param type: course type
-     * @throws Exception: if the action could not be completed (not teacher or already or in database does not exist an user with given username)
+     * @throws ErrorMessageException: if the action could not be completed (not teacher or already or in database does not exist an user with given username)
      */
     void addCourse(
-            final String username, final String courseName, final ClassType type) throws Exception;
+            final String username, final String courseName, final ClassType type) throws ErrorMessageException;
 
 
     /**
@@ -31,4 +32,11 @@ public interface ICourseService {
     Optional<Course> findCourseBy(
             final String username, final String name, final ClassType type);
 
+
+    /**
+     * @return a list with all elements from course table alongside info about users
+     *  USER PASSWORD SET TO NULL
+     *  USER PROFILE'S IMAGE decoded
+     */
+    List<Course> getAll();
 }

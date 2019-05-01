@@ -3,6 +3,7 @@ package application.database.interfaces;
 import application.model.Course;
 import application.model.Enrollment;
 import application.model.User;
+import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface IEnrollmentRepo {
      * Update the enrollment
      * @param enrollment: the enrollment that contains new or same info (update based on enrollment id)
      */
-    void update(Enrollment enrollment);
+    void update(Enrollment enrollment) throws ErrorMessageException;
 
     /**
      *

@@ -1,6 +1,7 @@
 package application.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import application.utils.model.UserRoles;
 
@@ -143,6 +144,7 @@ public class User implements Serializable {
 
     @Column
     @JsonProperty("passwd")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String password;
 
     @Column

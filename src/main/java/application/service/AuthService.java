@@ -5,13 +5,13 @@ import application.database.interfaces.IUserRepo;
 import application.messages.request.AuthenticationMessage;
 import application.messages.response.AuthenticationResponse;
 import application.model.User;
+import application.utils.exceptions.ErrorMessageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import application.service.interfaces.IAuthService;
 import sun.misc.BASE64Encoder;
-import application.utils.exceptions.UserException;
 
 import java.util.Optional;
 
@@ -48,9 +48,9 @@ public class AuthService implements IAuthService {
 
         try{
             this.userRepo.createAccount(username, password);
-        }catch (UserException e){
+        }catch (ErrorMessageException e){
             return new AuthenticationResponse(
-                    HttpStatus.IM_USED,
+                    e.getErrorMessage().getCode(),
                     e.getMessage()
             );
         }
@@ -62,12 +62,14 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public void changePassword(String oldPassword, String newPassword, String username) throws UserException {
+    public void changePassword(String oldPassword, String newPassword, String username) throws ErrorMessageException {
 
         Optional<User> user = userRepo.findUserByUsername(username);
 
         if(!user.isPresent()){
-            throw  new UserException(String.format("User %s does not exist", username));
+            throw new ErrorMessageException(
+                    String.format("User %s does not exist", username), HttpStatus.NOT_FOUND
+            );
         }
 
         final User usr = user.get();
@@ -75,7 +77,10 @@ public class AuthService implements IAuthService {
         final String encodedPassword = encoder.encode(oldPassword.getBytes());
 
         if(!encodedPassword.equals(usr.getPassword())){
-            throw  new UserException("Password could not be changed: wrong password");
+
+            throw new ErrorMessageException(
+                    "Password could not be changed: wrong password", HttpStatus.FORBIDDEN
+            );
         }
 
         usr.setPassword(

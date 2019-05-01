@@ -3,9 +3,10 @@ package application.database.implementation;
 import application.database.AbstractRepoImpl;
 import application.database.interfaces.IUserRepo;
 import application.model.User;
+import application.utils.exceptions.ErrorMessageException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import application.utils.exceptions.UserException;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
 
     @Override
-    public void createAccount(String username, String password) throws UserException {
+    public void createAccount(String username, String password) throws ErrorMessageException {
 
         try(Session session = persistenceUtils.getSessionFactory().openSession()){
 
@@ -28,7 +29,9 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
                 transaction.commit();
             }catch (Exception e){
                 transaction.rollback();
-                throw  new UserException(e.getMessage());
+                throw new ErrorMessageException(
+                        String.format("User with username: %s already exists.", username), HttpStatus.INTERNAL_SERVER_ERROR
+                );
             }
         }
     }

@@ -5,9 +5,10 @@ import application.database.interfaces.IAttendanceRepo;
 import application.model.Attendance;
 import application.model.Course;
 import application.model.User;
-import application.utils.exceptions.UserException;
+import application.utils.exceptions.ErrorMessageException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements IAttendanceRepo {
 
     @Override
-    public void addAttendance(final User student, final Course course) throws Exception {
+    public void addAttendance(final User student, final Course course) throws ErrorMessageException {
 
         try(Session session = persistenceUtils.getSessionFactory().openSession()){
 
@@ -31,7 +32,7 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
                 transaction.commit();
             }catch (Exception e){
                 transaction.rollback();
-                throw  new Exception(e.getMessage());
+                throw  new ErrorMessageException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
