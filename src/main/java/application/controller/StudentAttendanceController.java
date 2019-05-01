@@ -1,21 +1,20 @@
 package application.controller;
 
 import application.messages.ErrorMessage;
-import application.messages.request.CheckStudentFaceMessage;
-import application.messages.request.GetCoursesForUserMessage;
+import application.messages.request.*;
+import application.messages.response.GetAttendanceForResponse;
 import application.messages.response.GetCoursesResponse;
+import application.model.Attendance;
 import application.model.Course;
 import application.service.interfaces.IAttendanceService;
 import application.service.interfaces.ICourseService;
+import application.utils.exceptions.ErrorMessageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +63,81 @@ public class StudentAttendanceController {
             return new ResponseEntity<>(errorMessage, errorMessage.getCode());
         }
     }
+
+    @PostMapping("/for")
+    public ResponseEntity<?> getAttendancesFor(@RequestBody GetAttendanceForMessage message) {
+
+        if (message.getUsername() == null) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        return new ResponseEntity<>(
+                new GetAttendanceForResponse(attendanceService.getAttendanceFor(message.getUsername())), HttpStatus.OK);
+    }
+
+    @PostMapping("/for-at")
+    public ResponseEntity<?> getAttendancesForAt(@RequestBody GetAttendancesForAtMessage message) {
+
+        if (message.getTeacherName() == null || message.getCourseName() == null || message.getType() == null || message.getStudentName() == null) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        return new ResponseEntity<>(
+                new GetAttendanceForResponse(
+                        attendanceService.getAttendanceForAt(
+                                message.getStudentName(), message.getCourseName(), message.getType(), message.getTeacherName()
+                        )),
+                HttpStatus.OK
+        );
+    }
+
+    @PostMapping(value = "/delete")
+    public ResponseEntity<?> deleteAttendance(@RequestBody DeleteAttendanceMessage message){
+
+        if(message.getAttendanceId() <= 0){
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Id must be positive"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        try{
+
+            attendanceService.delete(message.getAttendanceId());
+        }catch (ErrorMessageException ex){
+            return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/add")
+    public ResponseEntity<?> addAttendance(@RequestBody GetAttendancesForAtMessage message){
+
+        if (message.getTeacherName() == null || message.getCourseName() == null || message.getStudentName() == null || message.getType() == null) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        try{
+            attendanceService.addAttendance(
+                    message.getStudentName(), message.getCourseName(), message.getType(), message.getTeacherName()
+            );
+        }catch (ErrorMessageException ex){
+            return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     private IAttendanceService attendanceService;
     private ICourseService courseService;

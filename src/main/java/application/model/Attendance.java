@@ -1,5 +1,6 @@
 package application.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -68,11 +69,11 @@ public class Attendance implements Serializable {
     private Date attendanceDate;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "userId")
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "courseId")
     private Course course;
-
 }

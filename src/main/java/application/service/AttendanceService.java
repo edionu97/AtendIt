@@ -6,10 +6,12 @@ import application.database.interfaces.IUserRepo;
 import application.messages.ErrorMessage;
 import application.model.Attendance;
 import application.model.Course;
+import application.model.Profile;
 import application.model.User;
 import application.service.interfaces.IAttendanceService;
 import application.service.interfaces.ICourseService;
 import application.service.interfaces.IEnrollmentService;
+import application.service.interfaces.IProfileService;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @ComponentScan(
@@ -94,7 +97,7 @@ public class AttendanceService implements IAttendanceService {
     }
 
     @Override
-    public void update(Attendance attendance) throws  ErrorMessageException {
+    public void update(Attendance attendance) throws ErrorMessageException {
         attendanceRepo.update(attendance);
     }
 
@@ -113,11 +116,15 @@ public class AttendanceService implements IAttendanceService {
 
         final Optional<User> studentOptional = userRepo.findUserByUsername(username);
 
-        if (!studentOptional.isPresent()) {
-            return new ArrayList<>();
-        }
-
-        return attendanceRepo.getAllAttendancesFor(studentOptional.get());
+        return studentOptional.map(
+                user -> attendanceRepo
+                        .getAllAttendancesFor(user)
+                        .stream()
+                        .peek(
+                                attendance -> attendance.getCourse().getUser().setPassword(null)
+                        )
+                        .collect(Collectors.toList())
+        ).orElseGet(ArrayList::new);
     }
 
     @Override
@@ -129,17 +136,17 @@ public class AttendanceService implements IAttendanceService {
 
         final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
 
-        if (!studentOptional.isPresent()) {
-            return new ArrayList<>();
-        }
-
-        if (!courseOptional.isPresent()) {
-            return new ArrayList<>();
-        }
-
-        return attendanceRepo.getAttendancesForAt(
-                studentOptional.get(), courseOptional.get()
-        );
+        return studentOptional
+                .map(
+                        user -> courseOptional
+                                .map(course -> attendanceRepo.getAttendancesForAt(user, course)
+                                        .stream()
+                                        .peek(
+                                                attendance -> attendance.getCourse().getUser().setPassword(null)
+                                        )
+                                        .collect(Collectors.toList())
+                                ).orElseGet(ArrayList::new)
+                ).orElseGet(ArrayList::new);
     }
 
     private IUserRepo userRepo;
