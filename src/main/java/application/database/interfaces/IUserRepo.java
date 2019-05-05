@@ -2,6 +2,7 @@ package application.database.interfaces;
 
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.model.UserRoles;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,7 @@ public interface IUserRepo {
      * @param password: string
      * @throws ErrorMessageException : if in application.database exists an user with same username
      */
-    void createAccount(String username, String password) throws ErrorMessageException;
+    void createAccount(String username, String password, UserRoles userRoles) throws ErrorMessageException;
 
     /**
      * Checks if an user has account

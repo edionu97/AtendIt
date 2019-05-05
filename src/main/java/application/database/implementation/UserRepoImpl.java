@@ -4,6 +4,7 @@ import application.database.AbstractRepoImpl;
 import application.database.interfaces.IUserRepo;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.model.UserRoles;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,14 @@ import java.util.Optional;
 public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
 
     @Override
-    public void createAccount(String username, String password) throws ErrorMessageException {
+    public void createAccount(String username, String password, UserRoles userRoles) throws ErrorMessageException {
 
         try(Session session = persistenceUtils.getSessionFactory().openSession()){
 
             Transaction transaction = session.beginTransaction();
 
             try{
-                session.save(new User(username, password));
+                session.save(new User(username, password, userRoles));
                 transaction.commit();
             }catch (Exception e){
                 transaction.rollback();
