@@ -15,8 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -112,19 +111,71 @@ public class EnrollmentService implements IEnrollmentService {
                 teacherName, courseName, type
         );
 
-        return studentOptional.filter(user -> courseOptional.filter(course -> enrollmentRepo.findEnrollmentByUserAndCourse(user, course).isPresent()).isPresent()).isPresent();
+        if(!studentOptional.isPresent() || !courseOptional.isPresent()){
+            return  false;
+        }
 
+        final Course course = courseOptional.get();
+
+        return enrollmentRepo.getEnrollmentsFor(studentName).stream().anyMatch(x->x.getCourse().getCourseId() == course.getCourseId());
     }
 
     @Override
-    public List<Enrollment> getEnrollmentsFor(final String studentName) {
-        return enrollmentRepo
+    public Map<String, List<Enrollment>> getEnrollmentsFor(final String studentName) {
+        final List<Enrollment> enrollments = enrollmentRepo
                 .getEnrollmentsFor(studentName)
                 .stream()
                 .peek(
                         enrollment -> enrollment.getCourse().getUser().setPassword(null)
                 )
                 .collect(Collectors.toList());
+
+        Map<String, List<Enrollment>> groupedEnrollments = new TreeMap<>();
+        enrollments.forEach(enrollment -> {
+            groupedEnrollments.computeIfAbsent(enrollment.getCourse().getName(), (k) -> new ArrayList<>());
+            groupedEnrollments.get(enrollment.getCourse().getName()).add(enrollment);
+        });
+
+        return groupedEnrollments;
+    }
+
+    @Override
+    public Map<String, Boolean> getEnrollAtWholeCourseType(String studentName, String teacherName, String courseName) {
+
+        final Map<String, Boolean> result = new HashMap<>();
+
+        // get enrollments for user at teacher's course
+        final List<Enrollment> courseEnrollment = getEnrollmentsFor(studentName)
+                .get(courseName)
+                .stream()
+                .filter(
+                        x-> x.getCourse().getUser().getUsername().equals(teacherName)
+                ).collect(Collectors.toList());
+
+
+        boolean atCourse = false;
+        boolean atSeminar = false;
+        boolean atLaboratory = false;
+
+        for (Enrollment enrollment : courseEnrollment) {
+            switch (enrollment.getCourse().getType()){
+                case COURSE:
+                    atCourse = true;
+                    break;
+                case LABORATORY:
+                    atLaboratory = true;
+                    break;
+                case SEMINAR:
+                    atSeminar = true;
+                    break;
+            }
+        }
+
+        result.put("atCourse", atCourse);
+        result.put("atSeminar", atSeminar);
+        result.put("atLaboratory", atLaboratory);
+
+        return result;
     }
 
 

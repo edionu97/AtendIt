@@ -17,6 +17,6 @@ public class GetAttendanceForMessage implements Serializable {
         this.username = username;
     }
 
-    @JsonProperty(value = "usern")
+    @JsonProperty(value = "student")
     private String username;
 }

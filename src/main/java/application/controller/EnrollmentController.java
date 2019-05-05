@@ -8,6 +8,7 @@ import application.messages.response.GetEnrollmentsResponse;
 import application.model.Enrollment;
 import application.service.interfaces.IEnrollmentService;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.model.ClassType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/enrollment")
@@ -41,7 +45,7 @@ public class EnrollmentController {
             );
         }
 
-        final List<Enrollment> enrollments = enrollmentService.getEnrollmentsFor(message.getUsername());
+        final Map<String, List<Enrollment>> enrollments = enrollmentService.getEnrollmentsFor(message.getUsername());
         return new ResponseEntity<>(
                 new GetEnrollmentsResponse(enrollments), HttpStatus.OK
         );
@@ -110,6 +114,20 @@ public class EnrollmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping(value = "/at-types")
+    public ResponseEntity<?> getCourseTypeEnrollmentFor(@RequestBody EnrollMessage message){
+
+        if (message.getCourseName().isEmpty() || message.getStudentName().isEmpty()  ||  message.getTeacherName().isEmpty()) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        return new ResponseEntity<>(enrollmentService.getEnrollAtWholeCourseType(
+                message.getStudentName(), message.getTeacherName(), message.getCourseName()
+        ), HttpStatus.OK);
+    }
 
     private IEnrollmentService enrollmentService;
 }

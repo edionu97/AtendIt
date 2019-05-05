@@ -89,6 +89,19 @@ public class Course implements Serializable {
         this.attendances = attendances;
     }
 
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        abbreviation = abbreviation
+                .toUpperCase()
+                .substring(
+                        0, Math.min(5, abbreviation.length())
+                );
+        this.abbreviation = abbreviation;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
@@ -99,6 +112,9 @@ public class Course implements Serializable {
 
     @Column
     private ClassType type;
+
+    @Column
+    private String abbreviation;
 
     @ManyToOne
     @JoinColumn(name = "userId")

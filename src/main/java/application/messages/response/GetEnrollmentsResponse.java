@@ -4,23 +4,24 @@ import application.model.Enrollment;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class GetEnrollmentsResponse implements Serializable {
 
     public GetEnrollmentsResponse() {
     }
 
-    public GetEnrollmentsResponse(List<Enrollment> enrollments) {
-        this.enrollments = enrollments;
-    }
-
-    public List<Enrollment> getEnrollments() {
+    public Map<String, List<Enrollment>> getEnrollments() {
         return enrollments;
     }
 
-    public void setEnrollments(List<Enrollment> enrollments) {
+    public void setEnrollments(Map<String, List<Enrollment>> enrollments) {
         this.enrollments = enrollments;
     }
 
-    private List<Enrollment> enrollments;
+    public GetEnrollmentsResponse(Map<String, List<Enrollment>> enrollments) {
+        this.enrollments = enrollments;
+    }
+
+    private Map<String, List<Enrollment>> enrollments;
 }

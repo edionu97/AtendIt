@@ -5,6 +5,7 @@ import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IEnrollmentService {
 
@@ -40,8 +41,9 @@ public interface IEnrollmentService {
      * Returns all student enrollments
      *
      * @param studentName: the name of the student
-     * @return a list of values
+     * @return all enrollments for a specific student
      */
-    List<Enrollment> getEnrollmentsFor(final String studentName);
+    Map<String, List<Enrollment>> getEnrollmentsFor(final String studentName);
 
+    Map<String, Boolean> getEnrollAtWholeCourseType(final String studentName, final  String teacherName, final String courseName);
 }

@@ -9,6 +9,7 @@ import application.utils.exceptions.ErrorMessageException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.http.HttpStatus;
+import scala.Int;
 
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
