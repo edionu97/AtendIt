@@ -3,6 +3,8 @@ package application.model;
 
 import application.utils.model.ClassType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -118,13 +120,16 @@ public class Course implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "userId")
+    @Fetch(FetchMode.JOIN)
     private User user;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
+    @Fetch(FetchMode.JOIN)
     private Set<Enrollment> enrollments = new HashSet<>();
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
+    @Fetch(FetchMode.JOIN)
     private Set<Attendance> attendances = new HashSet<>();
 }

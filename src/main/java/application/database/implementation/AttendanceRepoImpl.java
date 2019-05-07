@@ -6,13 +6,17 @@ import application.model.Attendance;
 import application.model.Course;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
+import org.hibernate.Metamodel;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.http.HttpStatus;
 
+import javax.persistence.Entity;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+import javax.persistence.metamodel.EntityType;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,6 +107,7 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
 
             CriteriaQuery<Attendance> query = builder.createQuery(Attendance.class);
             Root<Attendance> table = query.from(Attendance.class);
+
 
             query.select(table).where(
                     builder.and(

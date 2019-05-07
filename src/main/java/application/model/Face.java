@@ -1,6 +1,8 @@
 package application.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -53,8 +55,10 @@ public class Face implements Serializable {
     @JsonIgnore
     @JoinColumn(name = "userId")
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
     private User user;
 
     @OneToMany(mappedBy = "face", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
     private List<FaceImage> faces = new ArrayList<>();
 }

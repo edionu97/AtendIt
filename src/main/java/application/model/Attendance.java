@@ -2,6 +2,8 @@ package application.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -71,9 +73,11 @@ public class Attendance implements Serializable {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "userId")
+    @Fetch(value = FetchMode.JOIN)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "courseId")
+    @Fetch(value = FetchMode.JOIN)
     private Course course;
 }

@@ -1,6 +1,8 @@
 package application.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -76,6 +78,7 @@ public class FaceImage implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "faceId")
+    @Fetch(FetchMode.JOIN)
     private Face face;
 
     @Column
