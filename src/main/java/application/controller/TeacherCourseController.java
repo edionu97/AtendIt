@@ -31,7 +31,7 @@ public class TeacherCourseController {
     @PostMapping(value = "/posted-by")
     public ResponseEntity<?> getCoursesPostedByUser(@RequestBody GetCoursesForUserMessage message){
 
-        if(message.getUsername().isEmpty()){
+        if(message.getUsername() == null || message.getUsername().isEmpty()){
             return new ResponseEntity<>(
                     new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
                     HttpStatus.BAD_REQUEST
