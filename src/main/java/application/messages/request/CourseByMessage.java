@@ -11,6 +11,14 @@ public class CourseByMessage implements Serializable {
 
     }
 
+    public String getAbreviation() {
+        return abreviation;
+    }
+
+    public void setAbreviation(String abreviation) {
+        this.abreviation = abreviation;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -43,4 +51,7 @@ public class CourseByMessage implements Serializable {
 
     @JsonProperty("courseType")
     private ClassType type;
+
+    @JsonProperty("abr")
+    private String abreviation;
 }

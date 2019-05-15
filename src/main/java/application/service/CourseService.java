@@ -29,7 +29,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public void addCourse(
-            final String username, final String courseName, final ClassType type) throws ErrorMessageException {
+            final String username, final String courseName, final String abreviation, final ClassType type) throws ErrorMessageException {
 
         Optional<User> userOptional = userRepo.findUserByUsername(username);
         if (!userOptional.isPresent()) {
@@ -48,7 +48,7 @@ public class CourseService implements ICourseService {
         // add new course into user's course list
         final Set<Course> courses = user.getCourses();
         courses.add(new Course(
-                courseName, type
+                courseName, type, abreviation
         ));
         user.setCourses(courses);
 

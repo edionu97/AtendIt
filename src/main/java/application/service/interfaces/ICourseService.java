@@ -18,7 +18,7 @@ public interface ICourseService {
      * @throws ErrorMessageException: if the action could not be completed (not teacher or already or in database does not exist an user with given username)
      */
     void addCourse(
-            final String username, final String courseName, final ClassType type) throws ErrorMessageException;
+            final String username, final String courseName, final String abreviation, final ClassType type) throws ErrorMessageException;
 
 
     /**

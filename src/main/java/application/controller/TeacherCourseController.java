@@ -1,4 +1,5 @@
 package application.controller;
+
 import application.messages.ErrorMessage;
 import application.messages.request.CourseByMessage;
 import application.messages.request.GetCoursesForUserMessage;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
- @RestController
+
+@RestController
 @RequestMapping("/courses")
 @ComponentScan(basePackages = "application.service")
 public class TeacherCourseController {
@@ -29,9 +31,9 @@ public class TeacherCourseController {
     }
 
     @PostMapping(value = "/posted-by")
-    public ResponseEntity<?> getCoursesPostedByUser(@RequestBody GetCoursesForUserMessage message){
+    public ResponseEntity<?> getCoursesPostedByUser(@RequestBody GetCoursesForUserMessage message) {
 
-        if(message.getUsername() == null || message.getUsername().isEmpty()){
+        if (message.getUsername() == null || message.getUsername().isEmpty()) {
             return new ResponseEntity<>(
                     new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
                     HttpStatus.BAD_REQUEST
@@ -54,9 +56,9 @@ public class TeacherCourseController {
     }
 
     @PostMapping(value = "/find-by")
-    public ResponseEntity<?> getCoursesPostedByUser(@RequestBody CourseByMessage message){
+    public ResponseEntity<?> getCoursesPostedByUser(@RequestBody CourseByMessage message) {
 
-        if(message.getUsername().isEmpty() || message.getType() == null || message.getName().isEmpty()){
+        if (message.getUsername().isEmpty() || message.getType() == null || message.getName().isEmpty()) {
             return new ResponseEntity<>(
                     new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
                     HttpStatus.BAD_REQUEST
@@ -65,7 +67,7 @@ public class TeacherCourseController {
 
         try {
             final Optional<Course> course = courseService.findCourseBy(
-                message.getUsername(), message.getName(), message.getType()
+                    message.getUsername(), message.getName(), message.getType()
             );
 
             return course
@@ -83,9 +85,9 @@ public class TeacherCourseController {
     }
 
     @PostMapping(value = "/add")
-    public ResponseEntity<?> addCourse(@RequestBody CourseByMessage message){
+    public ResponseEntity<?> addCourse(@RequestBody CourseByMessage message) {
 
-        if(message.getUsername().isEmpty() || message.getType() == null || message.getName().isEmpty()){
+        if (message.getUsername() == null || message.getType() == null || message.getName() == null || message.getAbreviation() == null) {
             return new ResponseEntity<>(
                     new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
                     HttpStatus.BAD_REQUEST
@@ -93,9 +95,9 @@ public class TeacherCourseController {
         }
 
         try {
-           courseService.addCourse(
-                   message.getUsername(), message.getName(), message.getType()
-           );
+            courseService.addCourse(
+                    message.getUsername(), message.getName(), message.getAbreviation(), message.getType()
+            );
         } catch (ErrorMessageException ex) {
             return new ResponseEntity<>(
                     ex.getErrorMessage(), ex.getErrorMessage().getCode()

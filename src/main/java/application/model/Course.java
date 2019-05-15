@@ -30,6 +30,12 @@ public class Course implements Serializable {
         this.type = type;
     }
 
+    public Course(String name, ClassType type, String abbreviation) {
+        this.name = name;
+        this.type = type;
+        this.abbreviation = abbreviation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
