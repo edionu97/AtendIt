@@ -2,10 +2,13 @@ package application.controller;
 
 import application.messages.ErrorMessage;
 import application.messages.request.AddEnrollmentMessage;
+import application.messages.request.CourseByMessage;
 import application.messages.request.EnrollMessage;
 import application.messages.request.GetEnrollmentsForMessage;
 import application.messages.response.GetEnrollmentsResponse;
+import application.model.Course;
 import application.model.Enrollment;
+import application.service.interfaces.ICourseService;
 import application.service.interfaces.IEnrollmentService;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
@@ -18,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,8 +31,9 @@ public class EnrollmentController {
 
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public EnrollmentController(final IEnrollmentService enrollmentService) {
+    public EnrollmentController(final IEnrollmentService enrollmentService, final ICourseService courseService) {
         this.enrollmentService = enrollmentService;
+        this.courseService = courseService;
     }
 
 
@@ -51,8 +53,27 @@ public class EnrollmentController {
         );
     }
 
+    @PostMapping(value = "/at")
+    public ResponseEntity<?> getCoursesPostedByUser(@RequestBody CourseByMessage message) {
+
+        if (message.getUsername() == null || message.getType() == null || message.getName() == null) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        final Map<String, List<Enrollment>> enrolled = new HashMap<>();
+        enrolled.put(
+                "enrollments",
+                courseService.getEnrollmentsAtCourse(
+                        message.getUsername(), message.getName(), message.getType()));
+
+        return new ResponseEntity<>(enrolled, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/check-enrollment")
-    public ResponseEntity<?> isEnrolledAt(@RequestBody EnrollMessage message){
+    public ResponseEntity<?> isEnrolledAt(@RequestBody EnrollMessage message) {
 
         if (message.getStudentName().isEmpty() || message.getCourseName().isEmpty() || message.getType() == null || message.getTeacherName().isEmpty()) {
             return new ResponseEntity<>(
@@ -71,7 +92,7 @@ public class EnrollmentController {
     }
 
     @PostMapping(value = "/add")
-    public ResponseEntity<?> isEnrolledAt(@RequestBody AddEnrollmentMessage message){
+    public ResponseEntity<?> isEnrolledAt(@RequestBody AddEnrollmentMessage message) {
 
         if (message.getStudentName().isEmpty() || message.getCourseName().isEmpty() || message.getType() == null || message.getTeacherName().isEmpty() || message.getGroup().isEmpty()) {
             return new ResponseEntity<>(
@@ -80,13 +101,13 @@ public class EnrollmentController {
             );
         }
 
-        try{
+        try {
 
             enrollmentService.addEnrollment(
                     message.getStudentName(), message.getCourseName(), message.getType(), message.getTeacherName(), message.getGroup()
             );
 
-        }catch (ErrorMessageException ex){
+        } catch (ErrorMessageException ex) {
             return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());
         }
 
@@ -94,7 +115,7 @@ public class EnrollmentController {
     }
 
     @PostMapping(value = "/delete")
-    public ResponseEntity<?> cancelEnrollment(@RequestBody EnrollMessage message){
+    public ResponseEntity<?> cancelEnrollment(@RequestBody EnrollMessage message) {
 
         if (message.getCourseName().isEmpty() || message.getStudentName().isEmpty() || message.getType() == null || message.getTeacherName().isEmpty()) {
             return new ResponseEntity<>(
@@ -103,11 +124,11 @@ public class EnrollmentController {
             );
         }
 
-        try{
+        try {
             enrollmentService.deleteEnrollment(
                     message.getStudentName(), message.getCourseName(), message.getType(), message.getTeacherName()
             );
-        }catch (ErrorMessageException ex){
+        } catch (ErrorMessageException ex) {
             return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());
         }
 
@@ -115,9 +136,9 @@ public class EnrollmentController {
     }
 
     @PostMapping(value = "/at-types")
-    public ResponseEntity<?> getCourseTypeEnrollmentFor(@RequestBody EnrollMessage message){
+    public ResponseEntity<?> getCourseTypeEnrollmentFor(@RequestBody EnrollMessage message) {
 
-        if (message.getCourseName().isEmpty() || message.getStudentName().isEmpty()  ||  message.getTeacherName().isEmpty()) {
+        if (message.getCourseName().isEmpty() || message.getStudentName().isEmpty() || message.getTeacherName().isEmpty()) {
             return new ResponseEntity<>(
                     new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
                     HttpStatus.BAD_REQUEST
@@ -130,4 +151,5 @@ public class EnrollmentController {
     }
 
     private IEnrollmentService enrollmentService;
+    private ICourseService courseService;
 }

@@ -2,6 +2,7 @@ package application.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -90,7 +91,6 @@ public class Enrollment implements Serializable {
     private Date enrollmentDate;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "userId")
     @Fetch(FetchMode.JOIN)
     private User user;
@@ -98,5 +98,6 @@ public class Enrollment implements Serializable {
     @ManyToOne
     @JoinColumn(name = "courseId")
     @Fetch(FetchMode.JOIN)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Course course;
 }

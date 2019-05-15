@@ -2,6 +2,7 @@ package application.service;
 
 import application.database.interfaces.IUserRepo;
 import application.model.Course;
+import application.model.Enrollment;
 import application.model.Profile;
 import application.model.User;
 import application.service.interfaces.ICourseService;
@@ -98,6 +99,41 @@ public class CourseService implements ICourseService {
     }
 
     @Override
+    public List<Enrollment> getEnrollmentsAtCourse(final String username, final String name, final ClassType type) {
+
+        final Optional<Course> course = findCourseBy(username, name, type);
+
+        if (!course.isPresent()) {
+            return new ArrayList<>();
+        }
+
+        final Set<String> set = new HashSet<>();
+
+        return course.get().getEnrollments().stream().peek(enrollment -> {
+            //remove the course and the password from result
+            enrollment.setCourse(null);
+            enrollment.getUser().setPassword(null);
+            try {
+                final Optional<Profile> profile = profileService.getUserProfile(enrollment.getUser().getUsername());
+                if (!profile.isPresent()) {
+                    return;
+                }
+                enrollment.getUser().setProfile(profile.get());
+            } catch (ErrorMessageException e) {
+                e.printStackTrace();
+            }
+
+        }).filter(x -> {
+            //keep only distinct values from database
+            if (set.contains(x.getUser().getUsername())) {
+                return false;
+            }
+            set.add(x.getUser().getUsername());
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     public List<Course> getAll() {
 
         return userRepo
@@ -120,10 +156,11 @@ public class CourseService implements ICourseService {
 
     /**
      * Remove the password from user and set's the profile image
+     *
      * @param course: the course which will be modified
      * @return same course but with user's password and user's profile image modified
      */
-    private Course _setCourseProfileImageAndRemoveUserPassword(final Course course){
+    private Course _setCourseProfileImageAndRemoveUserPassword(final Course course) {
 
         course.getUser().setPassword(null);
 
