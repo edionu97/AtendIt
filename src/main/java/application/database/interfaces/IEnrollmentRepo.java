@@ -61,4 +61,16 @@ public interface IEnrollmentRepo {
      */
     List<ClassType> getEnrollmentAtAllClassTypesFor(
             final String studentName, final String courseName, final String teacherName);
+
+    /**
+     *
+     * @param studentName: the name of the student
+     * @param courseName: the name of te course
+     * @param type: the course type
+     * @param teacherName: the name of the teacher that proposed the course
+     * @return true if student is enrolled at course or false otherwise
+     */
+    boolean isEnrolledAtCourse(
+            final String studentName, final String courseName, final ClassType type, final String teacherName);
+
 }

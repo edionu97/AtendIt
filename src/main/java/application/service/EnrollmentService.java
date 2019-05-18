@@ -104,20 +104,9 @@ public class EnrollmentService implements IEnrollmentService {
 
     @Override
     public boolean isEnrolledAtCourse(String studentName, String courseName, ClassType type, String teacherName) {
-
-        final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
-
-        final Optional<Course> courseOptional = courseService.findCourseBy(
-                teacherName, courseName, type
+        return enrollmentRepo.isEnrolledAtCourse(
+                studentName, courseName, type, teacherName
         );
-
-        if(!studentOptional.isPresent() || !courseOptional.isPresent()){
-            return  false;
-        }
-
-        final Course course = courseOptional.get();
-
-        return enrollmentRepo.getEnrollmentsFor(studentName).stream().anyMatch(x->x.getCourse().getCourseId() == course.getCourseId());
     }
 
     @Override
@@ -151,10 +140,10 @@ public class EnrollmentService implements IEnrollmentService {
         final List<ClassType> types = enrollmentRepo
                 .getEnrollmentAtAllClassTypesFor(
                         studentName, courseName, teacherName
-        );
+                );
 
-        for (final ClassType type:  types) {
-            switch (type){
+        for (final ClassType type : types) {
+            switch (type) {
                 case COURSE:
                     atCourse = true;
                     break;

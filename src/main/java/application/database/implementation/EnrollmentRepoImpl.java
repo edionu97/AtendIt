@@ -103,7 +103,7 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
                     "select distinct e.group from Enrollment e " +
                             "inner join e.course c " +
                             "inner join c.user u " +
-                            "where u.username = :username";
+                    "where u.username = :username";
 
             return session
                     .createQuery(HQL)
@@ -122,10 +122,11 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
 
         try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
-            final String HQL = "select course.type from Enrollment e " +
-                    "inner join e.course course " +
-                    "inner join course.user teacher " +
-                    "inner join e.user student " +
+            final String HQL =
+                    "select course.type from Enrollment e " +
+                        "inner join e.course course " +
+                        "inner join course.user teacher " +
+                        "inner join e.user student " +
                     "where student.username = :studentName and course.name = :courseName and teacher.username =:teacherName";
 
             return session
@@ -139,4 +140,33 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
 
         return new ArrayList<>();
     }
+
+    @Override
+    public boolean isEnrolledAtCourse(
+            final String studentName, final String courseName, final ClassType type, final String teacherName) {
+
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
+
+            final String HQL =
+                    "select student.role from Enrollment e " +
+                        "inner join e.course c " +
+                        "inner join e.user student " +
+                        "inner join c.user teacher " +
+                    "where c.name = :courseName and c.type = :courseType and student.username = :studentName and teacher.username = :teacherName";
+
+
+            return !session
+                    .createQuery(HQL)
+                    .setParameter("courseName", courseName)
+                    .setParameter("courseType", type)
+                    .setParameter("studentName", studentName)
+                    .setParameter("teacherName",teacherName).getResultList().isEmpty();
+
+        } catch (NoResultException ignored) {
+        }
+
+        return false;
+    }
+
+
 }
