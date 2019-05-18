@@ -21,6 +21,10 @@ public class Profile implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
+    }
+
     public int getProfileId() {
         return profileId;
     }

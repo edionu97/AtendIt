@@ -1,5 +1,6 @@
 package application.database.interfaces;
 
+import application.model.Profile;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.UserRoles;
@@ -43,4 +44,10 @@ public interface IUserRepo {
      * @return A list with all users from application.database
      */
     List<User> getAllUsers();
+
+    /**
+     * @param username: String representing the username
+     * @return user profile
+     */
+    Optional<Profile> getUserProfile(final String username);
 }

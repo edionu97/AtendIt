@@ -2,6 +2,7 @@ package application.database.implementation;
 
 import application.database.AbstractRepoImpl;
 import application.database.interfaces.IUserRepo;
+import application.model.Profile;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.UserRoles;
@@ -99,6 +100,33 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
             query.select(table);
 
             return session.createQuery(query).getResultList();
+        }
+    }
+
+    @Override
+    public Optional<Profile> getUserProfile(final String username) {
+        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+
+            final String HQL =
+                    "select " +
+                            "new application.model.query.ProfilePart(" +
+                                    "p.firstName, " +
+                                    "p.lastName, " +
+                                    "p.email, " +
+                                    "p.phoneNumber, " +
+                                    "p.image, " +
+                                    "p.imageType, " +
+                                    "p.profileId " +
+                            ") from User u " +
+                        "inner join u.profile p " +
+                    "where u.username = :username";
+
+            return session
+                    .createQuery(HQL)
+                    .setParameter("username", username)
+                    .getResultList()
+                    .stream()
+                    .findFirst();
         }
     }
 }

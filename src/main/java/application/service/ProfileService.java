@@ -25,20 +25,13 @@ public class ProfileService implements IProfileService {
     @Override
     public Optional<Profile> getUserProfile(String username) throws ErrorMessageException {
 
-        Optional<User> user = userRepo.findUserByUsername(username);
+        final Optional<Profile> profileOptional = userRepo.getUserProfile(username);
 
-        if (!user.isPresent()) {
-            throw  new ErrorMessageException(
-                    String.format("User %s not found", username), HttpStatus.NOT_FOUND
-            );
-        }
-
-        final Profile profile = user.get().getProfile();
-
-        if (profile == null) {
+        if (!profileOptional.isPresent()) {
             return Optional.empty();
         }
 
+        final Profile profile = profileOptional.get();
         if (profile.getImage() != null) {
             profile.setImageType(
                     profile.getImageType() + "," + Base64.getEncoder().encodeToString(profile.getImage())
