@@ -4,6 +4,7 @@ import application.model.Course;
 import application.model.Enrollment;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.model.ClassType;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,4 +52,13 @@ public interface IEnrollmentRepo {
          * with name @param teacherName
      */
     List<String> getClassesEnrolledAtTeachersCourses(final String teacherName);
+
+    /**
+     * @param studentName: the name of the student
+     * @param courseName: the name of the course
+     * @param teacherName: the name of the teacher
+     * @return a list with all enrollments for a specific user to a specific course
+     */
+    List<ClassType> getEnrollmentAtAllClassTypesFor(
+            final String studentName, final String courseName, final String teacherName);
 }

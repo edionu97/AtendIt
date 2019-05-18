@@ -144,21 +144,17 @@ public class EnrollmentService implements IEnrollmentService {
 
         final Map<String, Boolean> result = new HashMap<>();
 
-        // get enrollments for user at teacher's course
-        final List<Enrollment> courseEnrollment = getEnrollmentsFor(studentName)
-                .get(courseName)
-                .stream()
-                .filter(
-                        x-> x.getCourse().getUser().getUsername().equals(teacherName)
-                ).collect(Collectors.toList());
-
-
         boolean atCourse = false;
         boolean atSeminar = false;
         boolean atLaboratory = false;
 
-        for (Enrollment enrollment : courseEnrollment) {
-            switch (enrollment.getCourse().getType()){
+        final List<ClassType> types = enrollmentRepo
+                .getEnrollmentAtAllClassTypesFor(
+                        studentName, courseName, teacherName
+        );
+
+        for (final ClassType type:  types) {
+            switch (type){
                 case COURSE:
                     atCourse = true;
                     break;

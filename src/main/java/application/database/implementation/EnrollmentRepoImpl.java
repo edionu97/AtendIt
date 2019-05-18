@@ -6,6 +6,7 @@ import application.model.Course;
 import application.model.Enrollment;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.model.ClassType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.http.HttpStatus;
@@ -102,13 +103,37 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
                     "select distinct e.group from Enrollment e " +
                             "inner join e.course c " +
                             "inner join c.user u " +
-                    "where u.username = :username";
+                            "where u.username = :username";
 
             return session
                     .createQuery(HQL)
                     .setParameter("username", teacherName)
                     .getResultList();
 
+        } catch (NoResultException ignored) {
+        }
+
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<ClassType> getEnrollmentAtAllClassTypesFor(
+            final String studentName, final String courseName, final String teacherName) {
+
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
+
+            final String HQL = "select course.type from Enrollment e " +
+                    "inner join e.course course " +
+                    "inner join course.user teacher " +
+                    "inner join e.user student " +
+                    "where student.username = :studentName and course.name = :courseName and teacher.username =:teacherName";
+
+            return session
+                    .createQuery(HQL)
+                    .setParameter("studentName", studentName)
+                    .setParameter("courseName", courseName)
+                    .setParameter("teacherName", teacherName)
+                    .getResultList();
         } catch (NoResultException ignored) {
         }
 
