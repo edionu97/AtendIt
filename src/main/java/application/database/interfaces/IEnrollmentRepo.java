@@ -43,4 +43,12 @@ public interface IEnrollmentRepo {
      */
     Optional<Enrollment> findEnrollmentByUserAndCourse(final User user, final Course course);
 
+    /**
+     *
+     * @param teacherName: the name of the teacher
+     * @return a list of strings representing
+         * all the student's grupes that are enrolled to at least one course posted by teacher
+         * with name @param teacherName
+     */
+    List<String> getClassesEnrolledAtTeachersCourses(final String teacherName);
 }

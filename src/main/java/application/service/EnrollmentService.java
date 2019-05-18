@@ -178,6 +178,11 @@ public class EnrollmentService implements IEnrollmentService {
         return result;
     }
 
+    @Override
+    public List<String> getClassesEnrolledAtTeacherCourses(String teacherName) {
+        return enrollmentRepo.getClassesEnrolledAtTeachersCourses(teacherName);
+    }
+
 
     private IUserRepo userRepo;
     private IEnrollmentRepo enrollmentRepo;

@@ -1,10 +1,7 @@
 package application.controller;
 
 import application.messages.ErrorMessage;
-import application.messages.request.AddEnrollmentMessage;
-import application.messages.request.CourseByMessage;
-import application.messages.request.EnrollMessage;
-import application.messages.request.GetEnrollmentsForMessage;
+import application.messages.request.*;
 import application.messages.response.GetEnrollmentsResponse;
 import application.model.Course;
 import application.model.Enrollment;
@@ -51,6 +48,23 @@ public class EnrollmentController {
         return new ResponseEntity<>(
                 new GetEnrollmentsResponse(enrollments), HttpStatus.OK
         );
+    }
+
+    @PostMapping(value = "/get-grups")
+    public ResponseEntity<?> getGroupsEnrolledAtTeacherCourses(@RequestBody GetCoursesForUserMessage userMessage){
+
+        if(userMessage.getUsername() == null){
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        final Map<String, List<String>> classes = new HashMap<>();
+        classes.put("classes",
+                enrollmentService.getClassesEnrolledAtTeacherCourses(userMessage.getUsername()));
+
+        return new ResponseEntity<>(classes, HttpStatus.OK);
     }
 
     @PostMapping(value = "/at")

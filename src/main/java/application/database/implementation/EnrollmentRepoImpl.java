@@ -12,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import scala.Int;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +47,7 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
     @Override
     public List<Enrollment> getEnrollmentsFor(String studentName) {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -89,5 +91,27 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<String> getClassesEnrolledAtTeachersCourses(String teacherName) {
+
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
+
+            final String HQL =
+                    "select distinct e.group from Enrollment e " +
+                            "inner join e.course c " +
+                            "inner join c.user u " +
+                    "where u.username = :username";
+
+            return session
+                    .createQuery(HQL)
+                    .setParameter("username", teacherName)
+                    .getResultList();
+
+        } catch (NoResultException ignored) {
+        }
+
+        return new ArrayList<>();
     }
 }
