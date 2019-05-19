@@ -121,6 +121,10 @@ public class User implements Serializable {
         this.courses = courses;
     }
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public Set<Enrollment> getEnrollments() {
         return enrollments;
     }

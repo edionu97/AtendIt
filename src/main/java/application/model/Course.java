@@ -51,6 +51,10 @@ public class Course implements Serializable {
         return Objects.hash(getCourseId(), getName(), getType());
     }
 
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
     public int getCourseId() {
         return courseId;
     }

@@ -1,5 +1,6 @@
 package application.service;
 
+import application.database.interfaces.ICourseRepo;
 import application.database.interfaces.IUserRepo;
 import application.model.Course;
 import application.model.Enrollment;
@@ -23,9 +24,10 @@ import java.util.stream.Collectors;
 public class CourseService implements ICourseService {
 
     @Autowired
-    public CourseService(final IUserRepo userRepo, final IProfileService profileService) {
+    public CourseService(final IUserRepo userRepo, final IProfileService profileService, final ICourseRepo courseRepo) {
         this.userRepo = userRepo;
         this.profileService = profileService;
+        this.courseRepo = courseRepo;
     }
 
     @Override
@@ -136,18 +138,9 @@ public class CourseService implements ICourseService {
     @Override
     public List<Course> getAll() {
 
-        return userRepo
-                .getAllUsers()
+        return   courseRepo
+                .getAll()
                 .stream()
-                .filter(
-                        x -> x.getRole().equals(UserRoles.TEACHER)
-                )
-                .map(
-                        User::getCourses
-                )
-                .flatMap(
-                        Collection::stream
-                )
                 .map(this::_setCourseProfileImageAndRemoveUserPassword)
                 .collect(
                         Collectors.toList()
@@ -180,5 +173,6 @@ public class CourseService implements ICourseService {
     }
 
     private IUserRepo userRepo;
+    private ICourseRepo courseRepo;
     private IProfileService profileService;
 }

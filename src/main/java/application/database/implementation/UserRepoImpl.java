@@ -14,6 +14,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,12 +95,15 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
 
         try(Session session = persistenceUtils.getSessionFactory().openSession()){
 
-            CriteriaQuery<User> query = session.getCriteriaBuilder().createQuery(User.class);
+            final  String HQL =
+                    "select new application.model.query.UserPart(" +
+                            "u.username, " +
+                            "u.role,"+
+                            "u.userId" +
+                            ")" +
+                            "from User u left join u.profile p";
 
-            Root<User> table = query.from(User.class);
-            query.select(table);
-
-            return session.createQuery(query).getResultList();
+            return  session.createQuery(HQL).getResultList();
         }
     }
 

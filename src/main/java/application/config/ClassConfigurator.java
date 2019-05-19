@@ -1,13 +1,7 @@
 package application.config;
 
-import application.database.implementation.AttendanceRepoImpl;
-import application.database.implementation.EnrollmentRepoImpl;
-import application.database.implementation.FaceImagesRepoImpl;
-import application.database.implementation.UserRepoImpl;
-import application.database.interfaces.IAttendanceRepo;
-import application.database.interfaces.IEnrollmentRepo;
-import application.database.interfaces.IFaceImagesRepo;
-import application.database.interfaces.IUserRepo;
+import application.database.implementation.*;
+import application.database.interfaces.*;
 import artificial_inteligence.detector.IDetector;
 import artificial_inteligence.detector.YOLOModel;
 import artificial_inteligence.video.DetectionCropper;
@@ -32,6 +26,11 @@ public class ClassConfigurator {
         return  new FaceImagesRepoImpl(
                 userRepo()
         );
+    }
+
+    @Bean
+    public ICourseRepo courseRepo(){
+        return  new CourseRepoImpl();
     }
 
     @Bean
