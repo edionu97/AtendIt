@@ -1,19 +1,19 @@
 package application.controller;
 
 import application.messages.ErrorMessage;
+import application.service.interfaces.IAttendanceService;
 import application.service.interfaces.IStreamingService;
+import application.utils.exceptions.ErrorMessageException;
+import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import java.io.*;
-import java.util.Objects;
+import java.io.IOException;
 
 
 @RestController
@@ -23,18 +23,19 @@ public class StreamingController {
 
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public StreamingController(final IStreamingService service){
+    public StreamingController(final IStreamingService service, final IAttendanceService attendanceService) {
         this.service = service;
+        this.attendanceService = attendanceService;
     }
 
 
     @PostMapping("/image")
-    public ResponseEntity<?> putImage(@RequestParam MultipartFile file){
+    public ResponseEntity<?> putImage(@RequestParam MultipartFile file) {
 
-        try{
+        try {
 
             this.service.identifyObjects(file.getBytes());
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ErrorMessage message = new ErrorMessage(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     ex.getMessage()
@@ -49,19 +50,19 @@ public class StreamingController {
             method = RequestMethod.POST,
             value = "/update-left-right",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public  ResponseEntity<?> putLeftRight(
+    public ResponseEntity<?> putLeftRight(
             @RequestParam(name = "fileLeftRight") MultipartFile leftRightFile,
             @RequestParam("user") String username,
-            @RequestParam(name="fileUpDown") MultipartFile upDownFile){
+            @RequestParam(name = "fileUpDown") MultipartFile upDownFile) {
 
 
-        try{
+        try {
             this.service.uploadUserVideo(
                     leftRightFile.getBytes(),
                     username,
                     upDownFile.getBytes()
             );
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             ErrorMessage message = new ErrorMessage(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -74,5 +75,26 @@ public class StreamingController {
     }
 
 
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/attendance-video",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addAttendanceVideo(
+            @RequestParam(value = "video") MultipartFile attendanceVideo,
+            @RequestParam(value = "teacher") String teacher,
+            @RequestParam(value = "cls") String attendanceClass) {
+
+        try {
+            attendanceService.automaticAttendance(
+                    attendanceVideo.getBytes(), teacher, attendanceClass
+            );
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private IAttendanceService attendanceService;
     private IStreamingService service;
 }

@@ -68,5 +68,9 @@ public interface IAttendanceService {
      * @param teacherName: the name of the student
      * @return get attendances for a student at a specific couse
      */
-    List<Attendance> getAttendanceForAt(final String username, final String courseName, final ClassType type, final String teacherName);
+    List<Attendance> getAttendanceForAt(
+            final String username, final String courseName, final ClassType type, final String teacherName);
+
+    void automaticAttendance(
+            final byte[] attendanceVideo, final String teacherName, final String attendanceClass) throws  ErrorMessageException;
 }

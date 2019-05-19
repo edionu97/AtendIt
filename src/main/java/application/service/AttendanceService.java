@@ -11,11 +11,14 @@ import application.service.interfaces.ICourseService;
 import application.service.interfaces.IEnrollmentService;
 import application.service.interfaces.IProfileService;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.image_processing.VideoProcessor;
 import application.utils.model.ClassType;
+import org.bytedeco.javacpp.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import utils.image.ImageOps;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -138,6 +141,25 @@ public class AttendanceService implements IAttendanceService {
                         e.printStackTrace();
                     }
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void automaticAttendance(
+            final byte[] attendanceVideo, final String teacherName, final String attendanceClass) throws ErrorMessageException {
+
+        VideoProcessor processor = new VideoProcessor();
+
+        List<opencv_core.Mat> images = null;
+        try {
+            images = processor.getImages(attendanceVideo);
+            ImageOps.displayImage(images.get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        processor.dispose();
+
+        System.out.println(images.size());
     }
 
     private IUserRepo userRepo;
