@@ -1,5 +1,6 @@
 package application.database.interfaces;
 
+import application.model.Face;
 import application.model.Profile;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
@@ -50,4 +51,11 @@ public interface IUserRepo {
      * @return user profile
      */
     Optional<Profile> getUserProfile(final String username);
+
+    /**
+     * Returns user face
+     * @param username
+     * @return
+     */
+    Optional<Integer> getUserFaceId(final String username);
 }

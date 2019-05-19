@@ -37,10 +37,7 @@ public class AttendanceService implements IAttendanceService {
 
     @Override
     public boolean hasFaceSet(final String username) {
-        return userRepo
-                .findUserByUsername(username)
-                .filter(user -> user.getFace() != null)
-                .isPresent();
+        return userRepo.getUserFaceId(username).isPresent();
     }
 
     @Override

@@ -111,6 +111,7 @@ public class EnrollmentService implements IEnrollmentService {
 
     @Override
     public Map<String, List<Enrollment>> getEnrollmentsFor(final String studentName) {
+
         final List<Enrollment> enrollments = enrollmentRepo
                 .getEnrollmentsFor(studentName)
                 .stream()

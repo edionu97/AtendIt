@@ -2,6 +2,7 @@ package application.database.implementation;
 
 import application.database.AbstractRepoImpl;
 import application.database.interfaces.IUserRepo;
+import application.model.Face;
 import application.model.Profile;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
@@ -124,6 +125,25 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
                             ") from User u " +
                         "inner join u.profile p " +
                     "where u.username = :username";
+
+            return session
+                    .createQuery(HQL)
+                    .setParameter("username", username)
+                    .getResultList()
+                    .stream()
+                    .findFirst();
+        }
+    }
+
+    @Override
+    public Optional<Integer> getUserFaceId(String username) {
+
+        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+
+            final String HQL =
+                    "select f.faceId from Face f " +
+                        "inner join f.user u " +
+                    "where u.username =:username";
 
             return session
                     .createQuery(HQL)
