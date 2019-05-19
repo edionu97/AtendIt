@@ -48,4 +48,7 @@ public interface IEnrollmentService {
     Map<String, Boolean> getEnrollAtWholeCourseType(final String studentName, final  String teacherName, final String courseName);
 
     List<String> getClassesEnrolledAtTeacherCourses(final String teacherName);
+
+    long getEnrolledNumberAtCourseFromClass(
+            final String teacherName, final String courseName, final ClassType classType, final long grup);
 }

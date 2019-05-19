@@ -51,9 +51,9 @@ public class EnrollmentController {
     }
 
     @PostMapping(value = "/get-grups")
-    public ResponseEntity<?> getGroupsEnrolledAtTeacherCourses(@RequestBody GetCoursesForUserMessage userMessage){
+    public ResponseEntity<?> getGroupsEnrolledAtTeacherCourses(@RequestBody GetCoursesForUserMessage userMessage) {
 
-        if(userMessage.getUsername() == null){
+        if (userMessage.getUsername() == null) {
             return new ResponseEntity<>(
                     new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
                     HttpStatus.BAD_REQUEST
@@ -162,6 +162,24 @@ public class EnrollmentController {
         return new ResponseEntity<>(enrollmentService.getEnrollAtWholeCourseType(
                 message.getStudentName(), message.getTeacherName(), message.getCourseName()
         ), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/no-course-grup")
+    public ResponseEntity<?> getNoEnrollmentsAtCourseAndGroup(@RequestBody EnrollMessageCourseGroup message) {
+
+        if (message.getCourseName() == null || message.getTeacherName() == null || message.getGroup() == 0) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        final Map<String, Long> result = new HashMap<>();
+        result.put("number",
+                enrollmentService.getEnrolledNumberAtCourseFromClass(
+                        message.getTeacherName(), message.getCourseName(), message.getType(), message.getGroup())
+        );
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     private IEnrollmentService enrollmentService;

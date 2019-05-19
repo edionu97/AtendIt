@@ -7,6 +7,7 @@ import application.model.Enrollment;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
+import org.bytedeco.javacpp.Loader;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.http.HttpStatus;
@@ -166,6 +167,36 @@ public class EnrollmentRepoImpl extends AbstractRepoImpl<Enrollment> implements 
         }
 
         return false;
+    }
+
+    @Override
+    public long getEnrolledNumberAtCourseFromClass(
+            final String teacherName, final String courseName, final ClassType classType, final long grup) {
+
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
+
+            final String HQL =
+                    "select count(*) as number from Enrollment e " +
+                            "inner join e.course c " +
+                            "inner join c.user teacher " +
+                    "where " +
+                        "teacher.username =:teacherUsername and " +
+                        "c.name = :courseName and " +
+                        "c.type = :courseType and " +
+                        "e.group = :grup";
+
+
+            return  session.createQuery(HQL, Long.class)
+                    .setParameter("teacherUsername", teacherName)
+                    .setParameter("courseName", courseName)
+                    .setParameter("courseType", classType)
+                    .setParameter("grup", grup+"")
+                    .getSingleResult();
+
+        } catch (NoResultException ignored) {
+        }
+
+        return 0;
     }
 
 

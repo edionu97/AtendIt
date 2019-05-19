@@ -73,4 +73,13 @@ public interface IEnrollmentRepo {
     boolean isEnrolledAtCourse(
             final String studentName, final String courseName, final ClassType type, final String teacherName);
 
+    /**
+     * @param teacherName: teacher username
+     * @param courseName: course name
+     * @param classType: the student's class type
+     * @param grup: the student's grup
+     * @return the number of students enrolled at a specific course
+     */
+    long getEnrolledNumberAtCourseFromClass(
+            final String teacherName, final String courseName, final ClassType classType, final long grup);
 }
