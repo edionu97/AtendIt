@@ -24,14 +24,14 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
     @Override
     public void createAccount(String username, String password, UserRoles userRoles) throws ErrorMessageException {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             Transaction transaction = session.beginTransaction();
 
-            try{
+            try {
                 session.save(new User(username, password, userRoles));
                 transaction.commit();
-            }catch (Exception e){
+            } catch (Exception e) {
                 transaction.rollback();
                 throw new ErrorMessageException(
                         String.format("User with username: %s already exists.", username), HttpStatus.INTERNAL_SERVER_ERROR
@@ -43,35 +43,23 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
     @Override
     public boolean hasAccount(String username, String password) {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
-            CriteriaBuilder builder = session.getCriteriaBuilder();
+            final String HQL =
+                    "select u.userId from User u " +
+                            "where u.username =:username and u.password = :password";
 
-            CriteriaQuery<User> query = builder.createQuery(User.class);
-            Root<User> table = query.from(User.class);
-
-            query.select(table).where(
-                    builder.and(
-                            builder.equal(
-                                    table.get("username"),
-                                    username
-                            ),
-                            builder.equal(
-                                    table.get("password"),
-                                    password
-                            )
-                    )
-            );
-
-
-            return !session.createQuery(query).getResultList().isEmpty();
+            return !session.createQuery(HQL)
+                    .setParameter("username", username)
+                    .setParameter("password", password)
+                    .getResultList().isEmpty();
         }
     }
 
     @Override
     public Optional<User> findUserByUsername(String username) {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<User> query = builder.createQuery(User.class);
@@ -85,7 +73,7 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
             );
 
             return Optional.ofNullable(session.createQuery(query).getSingleResult());
-        }catch (NoResultException ignored){
+        } catch (NoResultException ignored) {
         }
 
         return Optional.empty();
@@ -94,37 +82,37 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
     @Override
     public List<User> getAllUsers() {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
-            final  String HQL =
+            final String HQL =
                     "select new application.model.query.UserPart(" +
-                                "u.username, " +
-                                "u.role,"+
-                                "u.userId" +
+                            "u.username, " +
+                            "u.role," +
+                            "u.userId" +
                             ")" +
                             "from User u left join u.profile p";
 
-            return  session.createQuery(HQL).getResultList();
+            return session.createQuery(HQL).getResultList();
         }
     }
 
     @Override
     public Optional<Profile> getUserProfile(final String username) {
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             final String HQL =
                     "select " +
                             "new application.model.query.ProfilePart(" +
-                                    "p.firstName, " +
-                                    "p.lastName, " +
-                                    "p.email, " +
-                                    "p.phoneNumber, " +
-                                    "p.image, " +
-                                    "p.imageType, " +
-                                    "p.profileId " +
+                            "p.firstName, " +
+                            "p.lastName, " +
+                            "p.email, " +
+                            "p.phoneNumber, " +
+                            "p.image, " +
+                            "p.imageType, " +
+                            "p.profileId " +
                             ") from User u " +
-                        "inner join u.profile p " +
-                    "where u.username = :username";
+                            "inner join u.profile p " +
+                            "where u.username = :username";
 
             return session
                     .createQuery(HQL)
@@ -138,12 +126,12 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
     @Override
     public Optional<Integer> getUserFaceId(String username) {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             final String HQL =
                     "select f.faceId from Face f " +
-                        "inner join f.user u " +
-                    "where u.username =:username";
+                            "inner join f.user u " +
+                            "where u.username =:username";
 
             return session
                     .createQuery(HQL)
