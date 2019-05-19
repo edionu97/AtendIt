@@ -61,6 +61,14 @@ public class Attendance implements Serializable {
         this.course = course;
     }
 
+    public void setAttendanceId(int attendanceId) {
+        this.attendanceId = attendanceId;
+    }
+
+    public void setAttendanceDate(Date attendanceDate) {
+        this.attendanceDate = attendanceDate;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int attendanceId;

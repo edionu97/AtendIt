@@ -4,6 +4,7 @@ import application.model.Attendance;
 import application.model.Course;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.model.ClassType;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,11 @@ public interface IAttendanceRepo {
     /**
      * Return all user attendances at a specific course
      */
+    @Deprecated
     List<Attendance> getAttendancesForAt(final User user, final Course course);
 
+
+    List<Attendance> getAttendancesForAt(
+            final String teacherName, final String studentName, final String courseName, final ClassType classType);
 
 }

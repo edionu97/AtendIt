@@ -4,10 +4,12 @@ import application.database.interfaces.IAttendanceRepo;
 import application.database.interfaces.IUserRepo;
 import application.model.Attendance;
 import application.model.Course;
+import application.model.Profile;
 import application.model.User;
 import application.service.interfaces.IAttendanceService;
 import application.service.interfaces.ICourseService;
 import application.service.interfaces.IEnrollmentService;
+import application.service.interfaces.IProfileService;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +30,12 @@ public class AttendanceService implements IAttendanceService {
 
     @Autowired
     public AttendanceService(
-            final IUserRepo userRepo, final ICourseService courseService, final IAttendanceRepo attendanceRepo, final IEnrollmentService enrollmentService) {
+            final IUserRepo userRepo, final ICourseService courseService, final IAttendanceRepo attendanceRepo, final IEnrollmentService enrollmentService, final IProfileService profileService) {
         this.userRepo = userRepo;
         this.courseService = courseService;
         this.attendanceRepo = attendanceRepo;
         this.enrollmentService = enrollmentService;
+        this.profileService = profileService;
     }
 
     @Override
@@ -119,27 +122,26 @@ public class AttendanceService implements IAttendanceService {
 
     @Override
     public List<Attendance> getAttendanceForAt(String studentName, String courseName, ClassType type, String teacherName) {
+        return attendanceRepo
+                .getAttendancesForAt(
+                        teacherName, studentName, courseName, type
+                ).stream().peek(x -> {
+                    try {
+                        final Optional<Profile> profileOptional = profileService.getUserProfile(teacherName);
 
-        final Optional<Course> courseOptional = courseService.findCourseBy(
-                teacherName, courseName, type
-        );
+                        if (!profileOptional.isPresent()) {
+                            return;
+                        }
 
-        final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
-
-        return studentOptional
-                .map(
-                        user -> courseOptional
-                                .map(course -> attendanceRepo.getAttendancesForAt(user, course)
-                                        .stream()
-                                        .peek(
-                                                attendance -> attendance.getCourse().getUser().setPassword(null)
-                                        )
-                                        .collect(Collectors.toList())
-                                ).orElseGet(ArrayList::new)
-                ).orElseGet(ArrayList::new);
+                        x.getCourse().getUser().setProfile(profileOptional.get());
+                    } catch (ErrorMessageException e) {
+                        e.printStackTrace();
+                    }
+                }).collect(Collectors.toList());
     }
 
     private IUserRepo userRepo;
+    private IProfileService profileService;
     private ICourseService courseService;
     private IAttendanceRepo attendanceRepo;
     private IEnrollmentService enrollmentService;

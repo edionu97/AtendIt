@@ -98,9 +98,9 @@ public class UserRepoImpl extends AbstractRepoImpl<User> implements IUserRepo {
 
             final  String HQL =
                     "select new application.model.query.UserPart(" +
-                            "u.username, " +
-                            "u.role,"+
-                            "u.userId" +
+                                "u.username, " +
+                                "u.role,"+
+                                "u.userId" +
                             ")" +
                             "from User u left join u.profile p";
 
