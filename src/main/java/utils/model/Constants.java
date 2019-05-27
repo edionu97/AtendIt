@@ -41,6 +41,10 @@ public class Constants {
         return acceptedImageHeight;
     }
 
+    public String getFaceModel() {
+        return faceModel;
+    }
+
     @XmlElement
     public void setOpencv(String opencv) {
         this.opencv = opencv;
@@ -93,11 +97,16 @@ public class Constants {
         this.acceptedImageWidth = acceptedImageWidth;
     }
 
-
-
+    @XmlElement(
+            name = "face-model"
+    )
+    public void setFaceModel(String faceModel) {
+        this.faceModel = faceModel;
+    }
 
     private String opencv;
     private String modelPath;
+    private String faceModel;
     private String imageFolderName;
     private String acceptedImageWidth;
     private String acceptedImageHeight;

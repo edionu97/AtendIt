@@ -8,4 +8,5 @@
     <model-path>C:\Users\Eduard\Desktop\Models\detection2_model.data</model-path>
     <accepted-image-width>416</accepted-image-width>
     <accepted-image-height>416</accepted-image-height>
+    <face-model>C:\Users\Eduard\Desktop\Models\faces.txt</face-model>
 </constants>
