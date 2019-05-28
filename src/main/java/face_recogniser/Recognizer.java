@@ -14,7 +14,9 @@ import utils.ConstantsManager;
 import utils.image.ImageOps;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +117,13 @@ public class Recognizer {
     }
 
     public  void saveModel(){
-        recognizer.write(ConstantsManager.getInstance().get("faceModel"));
+        final File file = new File(ConstantsManager.getInstance().get("faceModel"));
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        recognizer.write(file.getAbsolutePath());
     }
 
     private  boolean needsTrain = true;
