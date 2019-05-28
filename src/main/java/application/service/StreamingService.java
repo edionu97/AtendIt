@@ -5,6 +5,7 @@ import application.database.interfaces.IUserRepo;
 import application.model.Face;
 import application.model.FaceImage;
 import application.model.User;
+import application.service.interfaces.IRecognitionService;
 import application.service.interfaces.IStreamingService;
 import application.utils.image_processing.VideoProcessor;
 import artificial_inteligence.detector.YOLOModel;
@@ -30,19 +31,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-@ComponentScan("application/config")
+@ComponentScan(basePackages = {"application/config", "application/service"})
 public class StreamingService implements IStreamingService {
-
 
     @Autowired
     public StreamingService(
             final DetectionCropper cropper,
             final IUserRepo userRepo,
-            final IFaceImagesRepo faceImagesRepo
-    ) {
+            final IFaceImagesRepo faceImagesRepo,
+            final IRecognitionService recognitionService) {
+
         this.userRepo = userRepo;
         this.cropper = cropper;
         this.faceImagesRepo = faceImagesRepo;
+        this.recognitionService = recognitionService;
     }
 
     @Override
@@ -118,7 +120,7 @@ public class StreamingService implements IStreamingService {
     private void _setFaces(final String username) throws Exception {
 
         // delete previous face images if now there are some new images
-        if(!userFaces.isEmpty()){
+        if (!userFaces.isEmpty()) {
             faceImagesRepo.deleteAll(username);
         }
 
@@ -131,6 +133,12 @@ public class StreamingService implements IStreamingService {
         }
 
         final User user = userOpt.get();
+
+        //retrain the model to accept the new user face
+        recognitionService.fitToModel(
+                userFaces, user.getUsername(), user.getUserId()
+        );
+
         Face face = user.getFace() == null ? new Face() : user.getFace();
 
         // add user faces into list and set all face images
@@ -163,8 +171,12 @@ public class StreamingService implements IStreamingService {
     }
 
 
-    private final DetectionCropper cropper;
-    private final IUserRepo userRepo;
-    private final IFaceImagesRepo faceImagesRepo;
     private List<Mat> userFaces;
+
+    private final DetectionCropper cropper;
+
+    private final IUserRepo userRepo;
+
+    private final IFaceImagesRepo faceImagesRepo;
+    private final IRecognitionService recognitionService;
 }

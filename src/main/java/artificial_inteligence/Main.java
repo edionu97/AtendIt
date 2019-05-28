@@ -38,6 +38,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -45,6 +48,24 @@ import java.util.stream.Collectors;
 public class Main {
 
     public static void main(String... args) throws Exception {
+        Loader.load(opencv_java.class);
+        final File trainingDir = new File("C:\\Users\\Eduard\\Desktop\\faces94");
+        final File[] listFile = trainingDir.listFiles();
+        int counter = 0;
+
+        Recognizer recognizer = new Recognizer();
+
+        for (final File f : listFile) {
+            List<Mat> list = new ArrayList<>();
+            for (File file : f.listFiles()) {
+                Mat img =
+                        Imgcodecs.imread(file.getAbsolutePath());
+                list.add(img);
+            }
+            ++counter;
+            recognizer.fitToModel(list,f.getName(), counter);
+        }
+        recognizer.saveModel();
 
 //        Loader.load(opencv_java.class);
 //        DetectionCropper detectionCropper = new DetectionCropper(new YOLOModel());
@@ -86,7 +107,7 @@ public class Main {
         //repo.deleteAll("oni");
         //repo.deleteAll("edi");
 
-        new FaceDetector().play();
+        //new FaceDetector().play();
 
     }
 
