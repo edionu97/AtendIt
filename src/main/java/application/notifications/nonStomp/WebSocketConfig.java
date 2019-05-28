@@ -85,7 +85,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
             try{
                 final WebSocketSession session = usernameToSessions.get(username);
                 session.sendMessage(
-                        new TextMessage(data)
+                        new TextMessage("\"" + data +"\"")
                 );
             }catch (Exception ex){
                 ex.printStackTrace();
