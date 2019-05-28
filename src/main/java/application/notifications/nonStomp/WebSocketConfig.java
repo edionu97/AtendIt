@@ -35,12 +35,11 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 handler(), "/topic"
         ).setAllowedOrigins("*");
     }
-
     /**
      * Topic handler class
      * Manage the connected usernameToSessions and broadcast message to users
      */
-    private class TopicHandler extends TextWebSocketHandler {
+    public static class TopicHandler extends TextWebSocketHandler {
 
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws  Exception{
@@ -78,6 +77,22 @@ public class WebSocketConfig implements WebSocketConfigurer {
         }
 
         /**
+         * Push message from server to client
+         * @param username: the client's username
+         * @param data: the data that will be send to client
+         */
+        public static void pushMessage(final String username, final String data) {
+            try{
+                final WebSocketSession session = usernameToSessions.get(username);
+                session.sendMessage(
+                        new TextMessage(data)
+                );
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+
+        /**
          * Send message to all users or to specific users
          * @param sendTo: list of username
          * @param userdata: data to be send
@@ -109,6 +124,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
             });
         }
 
-        private ConcurrentHashMap<String, WebSocketSession> usernameToSessions = new ConcurrentHashMap<>();
+        private static ConcurrentHashMap<String, WebSocketSession> usernameToSessions = new ConcurrentHashMap<>();
     }
 }
