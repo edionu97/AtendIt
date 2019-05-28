@@ -159,7 +159,7 @@ public class AttendanceService implements IAttendanceService {
         executorService.submit(() -> {
             final List<String> labels = recognitionService
                     .getIdentifiedLables(attendanceVideo, .4);
-            System.out.println(labels);
+            System.out.println(recognitionService.getRecognitionConfidence());
             //iterate through all identified labels
             labels.forEach(studentUsername -> {
                 try {
