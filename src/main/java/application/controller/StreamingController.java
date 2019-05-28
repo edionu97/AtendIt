@@ -87,11 +87,12 @@ public class StreamingController {
             @RequestParam(value = "cls") String attendanceClass,
             @RequestParam(value = "courseName") String courseName,
             @RequestParam(value = "courseType") ClassType courseType) {
+
         try {
             attendanceService.automaticAttendance(
                     attendanceVideo.getBytes(), teacher, attendanceClass, courseName, courseType
             );
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
