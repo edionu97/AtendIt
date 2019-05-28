@@ -72,5 +72,5 @@ public interface IAttendanceService {
             final String username, final String courseName, final ClassType type, final String teacherName);
 
     void automaticAttendance(
-            final byte[] attendanceVideo, final String teacherName, final String attendanceClass) throws  ErrorMessageException;
+            final byte[] attendanceVideo, final String teacherName, final String attendanceClass, final String courseName, final ClassType courseType) throws  ErrorMessageException;
 }

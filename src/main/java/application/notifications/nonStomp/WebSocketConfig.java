@@ -81,14 +81,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
          * @param username: the client's username
          * @param data: the data that will be send to client
          */
-        public static void pushMessage(final String username, final String data) {
+        public synchronized static void pushMessage(final String username, final String data) {
             try{
                 final WebSocketSession session = usernameToSessions.get(username);
                 session.sendMessage(
                         new TextMessage("\"" + data +"\"")
                 );
             }catch (Exception ex){
-                ex.printStackTrace();
             }
         }
 

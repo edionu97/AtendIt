@@ -4,6 +4,7 @@ import application.messages.ErrorMessage;
 import application.service.interfaces.IAttendanceService;
 import application.service.interfaces.IStreamingService;
 import application.utils.exceptions.ErrorMessageException;
+import application.utils.model.ClassType;
 import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -83,12 +84,12 @@ public class StreamingController {
     public ResponseEntity<?> addAttendanceVideo(
             @RequestParam(value = "video") MultipartFile attendanceVideo,
             @RequestParam(value = "teacher") String teacher,
-            @RequestParam(value = "cls") String attendanceClass) {
-
+            @RequestParam(value = "cls") String attendanceClass,
+            @RequestParam(value = "courseName") String courseName,
+            @RequestParam(value = "courseType") ClassType courseType) {
         try {
-            attendanceVideo.transferTo(new File("video.mp4"));
             attendanceService.automaticAttendance(
-                    attendanceVideo.getBytes(), teacher, attendanceClass
+                    attendanceVideo.getBytes(), teacher, attendanceClass, courseName, courseType
             );
         }catch (Exception ex){
             ex.printStackTrace();

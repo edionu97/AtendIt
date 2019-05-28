@@ -46,22 +46,22 @@ public class Main {
 
     public static void main(String... args) throws Exception {
 
-        Loader.load(opencv_java.class);
-        DetectionCropper detectionCropper = new DetectionCropper(new YOLOModel());
-
-        FaceRecogniser faceRecogniser = new FaceRecogniser(detectionCropper, new Recognizer());
-
-
-        File f = new File("file.mp4");
-        FileInputStream inputStream = new FileInputStream(f);
-        byte[] bytes = new byte[(int)f.length()];
-        inputStream.read(bytes);
-
-        faceRecogniser.processFrames(bytes);
-
-        System.out.println(faceRecogniser.getIdentifiedFaces(.4));
-
-        System.out.println(faceRecogniser.getFrameFrequcency());
+//        Loader.load(opencv_java.class);
+//        DetectionCropper detectionCropper = new DetectionCropper(new YOLOModel());
+//
+//        FaceRecogniser faceRecogniser = new FaceRecogniser(detectionCropper, new Recognizer());
+//
+//
+//        File f = new File("file.mp4");
+//        FileInputStream inputStream = new FileInputStream(f);
+//        byte[] bytes = new byte[(int)f.length()];
+//        inputStream.read(bytes);
+//
+//        faceRecogniser.processFrames(bytes);
+//
+//        System.out.println(faceRecogniser.getIdentifiedFaces(.4));
+//
+//        System.out.println(faceRecogniser.getFrameFrequcency());
 
 //        Loader.load(opencv_java.class);
 //
@@ -86,7 +86,7 @@ public class Main {
         //repo.deleteAll("oni");
         //repo.deleteAll("edi");
 
-        //new FaceDetector().play();
+        new FaceDetector().play();
 
     }
 

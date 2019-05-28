@@ -6,13 +6,13 @@ import application.model.Attendance;
 import application.model.Course;
 import application.model.Profile;
 import application.model.User;
-import application.service.interfaces.IAttendanceService;
-import application.service.interfaces.ICourseService;
-import application.service.interfaces.IEnrollmentService;
-import application.service.interfaces.IProfileService;
+import application.notifications.nonStomp.WebSocketConfig;
+import application.service.interfaces.*;
+import application.service.utils.PushNotification;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.image_processing.VideoProcessor;
 import application.utils.model.ClassType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bytedeco.javacpp.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 import utils.image.ImageOps;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,12 +35,18 @@ public class AttendanceService implements IAttendanceService {
 
     @Autowired
     public AttendanceService(
-            final IUserRepo userRepo, final ICourseService courseService, final IAttendanceRepo attendanceRepo, final IEnrollmentService enrollmentService, final IProfileService profileService) {
+            final IUserRepo userRepo,
+            final ICourseService courseService,
+            final IAttendanceRepo attendanceRepo,
+            final IEnrollmentService enrollmentService,
+            final IProfileService profileService,
+            final IRecognitionService recognitionService) {
         this.userRepo = userRepo;
         this.courseService = courseService;
         this.attendanceRepo = attendanceRepo;
         this.enrollmentService = enrollmentService;
         this.profileService = profileService;
+        this.recognitionService = recognitionService;
     }
 
     @Override
@@ -145,26 +153,41 @@ public class AttendanceService implements IAttendanceService {
 
     @Override
     public void automaticAttendance(
-            final byte[] attendanceVideo, final String teacherName, final String attendanceClass) throws ErrorMessageException {
+            final byte[] attendanceVideo, final String teacherName, final String attendanceClass, final String courseName, final ClassType courseType) throws ErrorMessageException {
 
-        VideoProcessor processor = new VideoProcessor();
-
-        List<opencv_core.Mat> images = null;
-        try {
-            images = processor.getImages(attendanceVideo);
-            ImageOps.displayImage(images.get(0));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        processor.dispose();
-
-        System.out.println(images.size());
+        //put task on another thread
+        executorService.submit(() -> {
+            final List<String> labels = recognitionService
+                    .getIdentifiedLables(attendanceVideo, .4);
+            System.out.println(labels);
+            //iterate through all identified labels
+            labels.forEach(studentUsername -> {
+                try {
+                    addAttendance(
+                            studentUsername, courseName, courseType, teacherName
+                    );
+                    //send notification to client
+                    WebSocketConfig.TopicHandler.pushMessage(
+                            studentUsername,
+                            PushNotification.toJson(new PushNotification("update-attendances"))
+                    );
+                } catch (ErrorMessageException e) {
+                    e.printStackTrace();
+                }
+            });
+            //send notification to teacher
+            WebSocketConfig.TopicHandler.pushMessage(
+                    teacherName,
+                    PushNotification.toJson(new PushNotification("update-attendances"))
+            );
+        });
     }
 
     private IUserRepo userRepo;
-    private IProfileService profileService;
     private ICourseService courseService;
     private IAttendanceRepo attendanceRepo;
+    private IProfileService profileService;
     private IEnrollmentService enrollmentService;
+    private IRecognitionService recognitionService;
+    private ExecutorService executorService = Executors.newFixedThreadPool(20);
 }
