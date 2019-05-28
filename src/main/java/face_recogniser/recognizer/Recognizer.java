@@ -1,4 +1,4 @@
-package face_recogniser;
+package face_recogniser.recognizer;
 
 import javafx.util.Pair;
 import org.bytedeco.javacpp.DoublePointer;
@@ -28,22 +28,6 @@ public class Recognizer {
 
     public Recognizer() {
         _loadModelIfFound();
-    }
-
-
-    private void _loadModelIfFound() {
-        final File file = new File(
-                ConstantsManager.getInstance().get("faceModel")
-        );
-
-        needsTrain = !file.exists();
-
-        if (!file.exists()) {
-            System.out.println("Warning: face model not found!");
-            return;
-        }
-
-        recognizer.read(file.getAbsolutePath());
     }
 
     /**
@@ -124,6 +108,22 @@ public class Recognizer {
             e.printStackTrace();
         }
         recognizer.write(file.getAbsolutePath());
+    }
+
+
+    private void _loadModelIfFound() {
+        final File file = new File(
+                ConstantsManager.getInstance().get("faceModel")
+        );
+
+        needsTrain = !file.exists();
+
+        if (!file.exists()) {
+            System.out.println("Warning: face model not found!");
+            return;
+        }
+
+        recognizer.read(file.getAbsolutePath());
     }
 
     private  boolean needsTrain = true;

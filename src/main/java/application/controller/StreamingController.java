@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -85,6 +86,7 @@ public class StreamingController {
             @RequestParam(value = "cls") String attendanceClass) {
 
         try {
+            attendanceVideo.transferTo(new File("video.mp4"));
             attendanceService.automaticAttendance(
                     attendanceVideo.getBytes(), teacher, attendanceClass
             );

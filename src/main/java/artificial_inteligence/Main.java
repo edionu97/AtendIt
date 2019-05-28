@@ -7,13 +7,17 @@ import application.model.Face;
 import application.model.FaceImage;
 import application.model.User;
 import application.utils.image_processing.VideoProcessor;
+import artificial_inteligence.detector.YOLOModel;
 import artificial_inteligence.utils.TrainFileIterator;
 import artificial_inteligence.utils.annotation.Annotation;
 import artificial_inteligence.utils.xmls.BndBox;
 import artificial_inteligence.utils.xmls.Object;
 import artificial_inteligence.utils.xmls.Size;
 import artificial_inteligence.utils.xmls.Source;
+import artificial_inteligence.video.DetectionCropper;
 import artificial_inteligence.video.FaceDetector;
+import face_recogniser.FaceRecogniser;
+import face_recogniser.recognizer.Recognizer;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_java;
@@ -31,6 +35,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.awt.image.DataBufferByte;
 import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -40,6 +45,23 @@ import java.util.stream.Collectors;
 public class Main {
 
     public static void main(String... args) throws Exception {
+
+        Loader.load(opencv_java.class);
+        DetectionCropper detectionCropper = new DetectionCropper(new YOLOModel());
+
+        FaceRecogniser faceRecogniser = new FaceRecogniser(detectionCropper, new Recognizer());
+
+
+        File f = new File("file.mp4");
+        FileInputStream inputStream = new FileInputStream(f);
+        byte[] bytes = new byte[(int)f.length()];
+        inputStream.read(bytes);
+
+        faceRecogniser.processFrames(bytes);
+
+        System.out.println(faceRecogniser.getIdentifiedFaces(.4));
+
+        System.out.println(faceRecogniser.getFrameFrequcency());
 
 //        Loader.load(opencv_java.class);
 //
@@ -64,7 +86,7 @@ public class Main {
         //repo.deleteAll("oni");
         //repo.deleteAll("edi");
 
-        new FaceDetector().play();
+        //new FaceDetector().play();
 
     }
 

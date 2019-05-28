@@ -5,6 +5,8 @@ import application.database.interfaces.*;
 import artificial_inteligence.detector.IDetector;
 import artificial_inteligence.detector.YOLOModel;
 import artificial_inteligence.video.DetectionCropper;
+import face_recogniser.FaceRecogniser;
+import face_recogniser.recognizer.Recognizer;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_java;
 import org.deeplearning4j.nn.graph.ComputationGraph;
@@ -62,6 +64,17 @@ public class ClassConfigurator {
     @Bean
     public DetectionCropper cropper() {
         return new DetectionCropper(detector());
+    }
+
+
+    @Bean
+    public  Recognizer recognizer(){
+        return  new Recognizer();
+    }
+
+    @Bean
+    public FaceRecogniser faceRecogniser() {
+        return new FaceRecogniser(cropper(), recognizer());
     }
 
     @Bean(name = "multipartResolver")
