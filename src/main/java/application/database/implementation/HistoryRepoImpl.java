@@ -23,7 +23,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "h.grp, " +
                             "h.teacherName, " +
                             "h.attendanceImage) " +
-                            "from History h";
+                    "from History h";
 
             return session.createQuery(HQL).getResultList();
         }
@@ -46,11 +46,11 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "c.type, " +
                             "student.username, " +
                             "student.role)" +
-                            "from History h " +
+                    "from History h " +
                             "inner join h.attendances a " +
                             "inner join a.course c " +
                             "inner join a.user student " +
-                            "where h.teacherName=:teacher and h.historyId =:historyId ";
+                    "where h.teacherName=:teacher and h.historyId =:historyId ";
 
             return session
                     .createQuery(HQL)
@@ -70,7 +70,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "h.grp, " +
                             "h.teacherName, " +
                             "h.attendanceImage) " +
-                            "from History h where h.teacherName=:teacher and h.grp=:class";
+                    "from History h where h.teacherName=:teacher and h.grp=:class";
 
             return session
                     .createQuery(HQL)
@@ -97,7 +97,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "inner join e.course c " +
                             "inner join e.user student " +
                             "inner join c.user teacher " +
-                            "where c.name =:courseName and c.type=:courseType and teacher.username=:teacherName and e.group=:grupa";
+                    "where c.name =:courseName and c.type=:courseType and teacher.username=:teacherName and e.group=:grupa";
             final List<User> absents = session
                     .createQuery(HQL)
                     .setParameter("courseType", courseType)

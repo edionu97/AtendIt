@@ -1,6 +1,8 @@
 package application.service.interfaces;
 
 import application.model.History;
+import application.model.User;
+import application.utils.model.ClassType;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +26,17 @@ public interface IHistoryService {
      * @return: optiona.empty if in database does not exist such an user or optional.of(history) otherwise
      */
     Optional<History> findHistoryBy(final String teacher, final String group);
+
+
+    /**
+     * Get those users that are absent at a specified couse
+     * @param teacherName: teacher's name
+     * @param courseName: course's name
+     * @param courseType: course's type
+     * @param grupa: course's group
+     * @param historyId: history id
+     * @return a list with those users (partial user)
+     */
+    List<User> getAbsentUsers(
+            final String teacherName, final String courseName, final ClassType courseType, final String grupa, final int historyId);
 }
