@@ -97,7 +97,6 @@ public class AttendanceService implements IAttendanceService {
         }
 
         final byte[] imageBytes = ImageOps.convertMat2ByteArray(ImageOps.toMat(frame));
-
         attendanceRepo.addAttendance(
                 studentOptional.get(),
                 courseOptional.get(),
