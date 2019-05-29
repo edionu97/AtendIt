@@ -46,6 +46,11 @@ public class ClassConfigurator {
     }
 
     @Bean
+    public IHistoryRepo historyRepo() {
+        return new HistoryRepoImpl();
+    }
+
+    @Bean
     public BASE64Encoder encoder() {
         return new BASE64Encoder();
     }

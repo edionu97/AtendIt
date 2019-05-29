@@ -44,6 +44,7 @@ public class HibernateUtils {
                 .addAnnotatedClass(Face.class)
                 .addAnnotatedClass(FaceImage.class)
                 .addAnnotatedClass(Attendance.class)
+                .addAnnotatedClass(History.class)
                 .buildSessionFactory();
     }
 

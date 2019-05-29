@@ -4,6 +4,7 @@ import application.database.AbstractRepoImpl;
 import application.database.interfaces.IAttendanceRepo;
 import application.model.Attendance;
 import application.model.Course;
+import application.model.History;
 import application.model.User;
 import application.model.query.AttendancePart;
 import application.model.query.CoursePart;
@@ -32,20 +33,26 @@ import java.util.Optional;
 public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements IAttendanceRepo {
 
     @Override
-    public void addAttendance(final User student, final Course course) throws ErrorMessageException {
+    public void addAttendance(
+            final User student,
+            final Course course,
+            final History history,
+            final byte[] image,
+            final int height, final int width, final int type) throws ErrorMessageException {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             Transaction transaction = session.beginTransaction();
 
-            try{
+            try {
                 session.save(new Attendance(
-                        student, course
+                        student, course, history,
+                        image, height, width, type
                 ));
                 transaction.commit();
-            }catch (Exception e){
+            } catch (Exception e) {
                 transaction.rollback();
-                throw  new ErrorMessageException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new ErrorMessageException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
@@ -53,7 +60,7 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
     @Override
     public List<Attendance> getAllAttendancesFor(final User user) {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -73,7 +80,7 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
     @Override
     public List<Attendance> getAll() {
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -92,14 +99,14 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
 
         Optional<Attendance> optionalAttendance = Optional.empty();
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             Transaction transaction = session.beginTransaction();
 
-            try{
+            try {
                 optionalAttendance = Optional.of(session.get(Attendance.class, id));
                 transaction.commit();
-            }catch (Exception e){
+            } catch (Exception e) {
                 transaction.rollback();
             }
         }
@@ -110,7 +117,7 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
 
     @Override
     public List<Attendance> getAttendancesForAt(final User user, final Course course) {
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -137,25 +144,25 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
             final String teacherName, final String studentName, final String courseName, final ClassType classType) {
 
 
-        try(Session session = persistenceUtils.getSessionFactory().openSession()){
+        try (Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             //get attendance attendance that coressponds to the specific filter
             final String HQL =
                     "select new  application.model.query.AttendancePart(" +
-                                "a.attendanceId, " +
-                                "a.attendanceDate, " +
-                                "c.courseId, " +
-                                "teacher.userId" +
-                    ") from Attendance a " +
+                            "a.attendanceId, " +
+                            "a.attendanceDate, " +
+                            "c.courseId, " +
+                            "teacher.userId" +
+                            ") from Attendance a " +
                             "inner join a.course c " +
                             "inner join c.user teacher " +
                             "inner join a.user student " +
-                    "where " +
+                            "where " +
                             "c.name = :courseName and " +
                             "c.type = :classType and " +
                             "student.username =:studentName " +
                             "and teacher.username =:teacherName " +
-                    "order by a.attendanceDate desc ";
+                            "order by a.attendanceDate desc ";
             final List<Attendance> attendances = session
                     .createQuery(HQL)
                     .setParameter("courseName", courseName)
@@ -164,43 +171,43 @@ public class AttendanceRepoImpl extends AbstractRepoImpl<Attendance> implements 
                     .setParameter("studentName", studentName)
                     .getResultList();
 
-           for(final Attendance attendancePart : attendances){
+            for (final Attendance attendancePart : attendances) {
 
-               final int courseId = ((AttendancePart)attendancePart).getCourseId();
-               final int userId = ((AttendancePart)attendancePart).getUserId();
+                final int courseId = ((AttendancePart) attendancePart).getCourseId();
+                final int userId = ((AttendancePart) attendancePart).getUserId();
 
-               //get the course
-               final String HQL_COURSE = "" +
-                       "select new application.model.query.CoursePart(" +
-                               "c.name, " +
-                               "c.type, " +
-                               "c.abbreviation, " +
-                               "c.courseId" +
-                           ") " +
-                       "from Course c where c.courseId =:courseId";
-               final CoursePart  course = session
-                       .createQuery(HQL_COURSE, CoursePart.class)
-                       .setParameter("courseId", courseId)
-                       .getSingleResult();
+                //get the course
+                final String HQL_COURSE = "" +
+                        "select new application.model.query.CoursePart(" +
+                        "c.name, " +
+                        "c.type, " +
+                        "c.abbreviation, " +
+                        "c.courseId" +
+                        ") " +
+                        "from Course c where c.courseId =:courseId";
+                final CoursePart course = session
+                        .createQuery(HQL_COURSE, CoursePart.class)
+                        .setParameter("courseId", courseId)
+                        .getSingleResult();
 
-               //get the profile
-               final String HQL_PROFILE =
-                       "select new application.model.query.UserPart(" +
-                           "u.username, " +
-                           "u.role,"+
-                           "u.userId" +
-                           ")" +
-                       "from User u left join u.profile p where u.username = :teacherName";
-               final UserPart user = session
-                       .createQuery(HQL_PROFILE, UserPart.class)
-                       .setParameter("teacherName", teacherName)
-                       .getSingleResult();
+                //get the profile
+                final String HQL_PROFILE =
+                        "select new application.model.query.UserPart(" +
+                                "u.username, " +
+                                "u.role," +
+                                "u.userId" +
+                                ")" +
+                                "from User u left join u.profile p where u.username = :teacherName";
+                final UserPart user = session
+                        .createQuery(HQL_PROFILE, UserPart.class)
+                        .setParameter("teacherName", teacherName)
+                        .getSingleResult();
 
-               course.setUser(user);
-               attendancePart.setCourse(course);
-           }
+                course.setUser(user);
+                attendancePart.setCourse(course);
+            }
 
-           return  attendances;
+            return attendances;
         }
 
     }

@@ -1,5 +1,8 @@
 package application.server;
 import application.database.implementation.AttendanceRepoImpl;
+import application.database.implementation.HistoryRepoImpl;
+import application.model.History;
+import application.model.query.HistoryAttendanceCourseStudentPart;
 import application.utils.model.ClassType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -13,9 +16,12 @@ public class Main {
         new SpringApplicationBuilder(Main.class)
                 .headless(false)
                 .run(args);
-
-//        System.out.println(new AttendanceRepoImpl().getAttendancesForAt(
-//                "edi", "onu", "Verificarea si validarea sistemelor soft", ClassType.SEMINAR).get(0).getCourse().getUser().getUsername());
-
+//        HistoryRepoImpl historyRepo = new HistoryRepoImpl();
+//
+//        for(History h : historyRepo.getAllFor("edi")){
+//            final HistoryAttendanceCourseStudentPart part = (HistoryAttendanceCourseStudentPart)h;
+//
+//            System.out.println(part.getAttendanceImage() + " " + part.getCourseAbr() + " " + part.getCourseName() + " " + part.getRole());
+//        }
     }
 }

@@ -2,6 +2,7 @@ package application.database.interfaces;
 
 import application.model.Attendance;
 import application.model.Course;
+import application.model.History;
 import application.model.User;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
@@ -13,21 +14,27 @@ public interface IAttendanceRepo {
 
     /**
      * Add a new attendance to user
+     *
      * @param student: student to whom attendance will be given
-     * @param course: the course at attendance is given
+     * @param course:  the course at attendance is given
      * @throws ErrorMessageException if something is wrong
      */
-    void addAttendance(final User student, final Course course) throws ErrorMessageException;
+    void addAttendance(
+            final User student,
+            final Course course,
+            final History history,
+            final byte[] image,
+            final int height, final int width, final int type) throws ErrorMessageException;
 
     /**
      * Update the attendance
      */
-    void update(final  Attendance attendance) throws ErrorMessageException;
+    void update(final Attendance attendance) throws ErrorMessageException;
 
     /**
      * Delete the attendance
      */
-    void delete(final  Attendance attendance) throws  ErrorMessageException;
+    void delete(final Attendance attendance) throws ErrorMessageException;
 
     /**
      * Returns a list with all the attendances for a specific user

@@ -1,11 +1,9 @@
 package application.service;
 
 import application.database.interfaces.IAttendanceRepo;
+import application.database.interfaces.IHistoryRepo;
 import application.database.interfaces.IUserRepo;
-import application.model.Attendance;
-import application.model.Course;
-import application.model.Profile;
-import application.model.User;
+import application.model.*;
 import application.notifications.nonStomp.WebSocketConfig;
 import application.service.interfaces.*;
 import application.service.utils.PushNotification;
@@ -14,6 +12,7 @@ import application.utils.image_processing.VideoProcessor;
 import application.utils.model.ClassType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bytedeco.javacpp.opencv_core;
+import org.opencv.core.Mat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -36,12 +35,14 @@ public class AttendanceService implements IAttendanceService {
     @Autowired
     public AttendanceService(
             final IUserRepo userRepo,
+            final IHistoryRepo historyRepo,
             final ICourseService courseService,
             final IAttendanceRepo attendanceRepo,
             final IEnrollmentService enrollmentService,
             final IProfileService profileService,
             final IRecognitionService recognitionService) {
         this.userRepo = userRepo;
+        this.historyRepo = historyRepo;
         this.courseService = courseService;
         this.attendanceRepo = attendanceRepo;
         this.enrollmentService = enrollmentService;
@@ -55,7 +56,11 @@ public class AttendanceService implements IAttendanceService {
     }
 
     @Override
-    public void addAttendance(String studentName, String courseName, ClassType type, String teacherName) throws ErrorMessageException {
+    public void addAttendance(
+            final String studentName,
+            final String courseName,
+            final ClassType type,
+            final String teacherName, final String group, final opencv_core.Mat frame) throws ErrorMessageException {
 
         final Optional<Course> courseOptional = courseService.findCourseBy(
                 teacherName, courseName, type
@@ -84,8 +89,22 @@ public class AttendanceService implements IAttendanceService {
             );
         }
 
+        final Optional<History> optionalHistory = historyRepo.findHistoryBy(teacherName, group);
+
+        History history = new History(group, teacherName);
+        if (optionalHistory.isPresent()) {
+            history = optionalHistory.get();
+        }
+
+        final byte[] imageBytes = ImageOps.convertMat2ByteArray(ImageOps.toMat(frame));
+
         attendanceRepo.addAttendance(
-                studentOptional.get(), courseOptional.get()
+                studentOptional.get(),
+                courseOptional.get(),
+                history, imageBytes,
+                frame.size().height(),
+                frame.size().width(),
+                frame.type()
         );
     }
 
@@ -157,14 +176,18 @@ public class AttendanceService implements IAttendanceService {
 
         //put task on another thread
         executorService.submit(() -> {
+            //retrive the frames
+            final List<opencv_core.Mat> images = _getFramesFromVideo(attendanceVideo);
+            //get labels
             final List<String> labels = recognitionService
                     .getIdentifiedLables(attendanceVideo, .4);
+
             System.out.println(recognitionService.getRecognitionConfidence());
             //iterate through all identified labels
             labels.forEach(studentUsername -> {
                 try {
                     addAttendance(
-                            studentUsername, courseName, courseType, teacherName
+                            studentUsername, courseName, courseType, teacherName, attendanceClass, images.get(0)
                     );
                     //send notification to client
                     WebSocketConfig.TopicHandler.pushMessage(
@@ -180,10 +203,27 @@ public class AttendanceService implements IAttendanceService {
                     teacherName,
                     PushNotification.toJson(new PushNotification("update-attendances"))
             );
+
+            images.forEach(opencv_core.Mat::release);
         });
     }
 
+    private List<opencv_core.Mat> _getFramesFromVideo(final byte[] video) {
+        final VideoProcessor videoProcessor = new VideoProcessor();
+
+        //retrive the frames
+        List<opencv_core.Mat> images = null;
+        try {
+            images = videoProcessor.getImages(video);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return images;
+    }
+
     private IUserRepo userRepo;
+    private IHistoryRepo historyRepo;
     private ICourseService courseService;
     private IAttendanceRepo attendanceRepo;
     private IProfileService profileService;

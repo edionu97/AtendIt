@@ -129,7 +129,7 @@ public class StudentAttendanceController {
 
         try{
             attendanceService.addAttendance(
-                    message.getStudentName(), message.getCourseName(), message.getType(), message.getTeacherName()
+                    message.getStudentName(), message.getCourseName(), message.getType(), message.getTeacherName(), "TEST", null
             );
         }catch (ErrorMessageException ex){
             return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());

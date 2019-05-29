@@ -4,6 +4,7 @@ package application.service.interfaces;
 import application.model.Attendance;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
+import org.bytedeco.javacpp.opencv_core;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,12 @@ public interface IAttendanceService {
      * @throws application.utils.exceptions.ErrorMessageException: if something went wrong
      */
     void addAttendance(
-            final String studentName, final String courseName, final ClassType type, final String teacherName) throws ErrorMessageException;
+            final String studentName,
+            final String courseName,
+            final ClassType type,
+            final String teacherName,
+            final String group,
+            final opencv_core.Mat frame) throws ErrorMessageException;
 
     /**
      * Returns true if user has a list with face images and false contrary
