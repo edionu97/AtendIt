@@ -11,12 +11,16 @@ import application.utils.exceptions.ErrorMessageException;
 import application.utils.image_processing.VideoProcessor;
 import application.utils.model.ClassType;
 import org.bytedeco.javacpp.opencv_core;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import utils.image.ImageOps;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -94,7 +98,10 @@ public class AttendanceService implements IAttendanceService {
             history = optionalHistory.get();
         }
 
-        final byte[] imageBytes = ImageOps.convertMat2ByteArray(ImageOps.toMat(frame));
+        final byte[] imageBytes = ImageOps.convertMat2Bytes(
+                ImageOps.toMat(frame)
+        );
+
         attendanceRepo.addAttendance(
                 studentOptional.get(),
                 courseOptional.get(),
