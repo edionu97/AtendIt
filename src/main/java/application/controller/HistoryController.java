@@ -49,7 +49,7 @@ public class HistoryController {
         return new ResponseEntity<>(history, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/for-at")
+    @PostMapping(value = "/presents-at")
     public ResponseEntity<?> getHistoryForAt(@RequestBody HistoryForAtMessage message) {
 
         if (message.getUsern() == null || message.getId() == 0) {
