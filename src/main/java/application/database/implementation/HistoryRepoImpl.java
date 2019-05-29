@@ -16,37 +16,59 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
         try (final Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             final String HQL =
+                    "select new application.model.query.HistoryPart(" +
+                            "h.historyId, " +
+                            "h.grp, " +
+                            "h.teacherName, " +
+                            "h.attendanceImage) " +
+                    "from History h";
+
+            return session.createQuery(HQL).getResultList();
+        }
+    }
+
+    @Override
+    public List<History> getAllForAt(final String teacher, final int historyId) {
+
+        try (final Session session = persistenceUtils.getSessionFactory().openSession()) {
+
+            final String HQL =
                     "select  new application.model.query.HistoryAttendanceCourseStudentPart(" +
-                        "h.grp, " +
-                        "h.teacherName, " +
-                        "a.attendanceDate, " +
-                        "h.attendanceImage, " +
-                        "c.name, " +
-                        "c.abbreviation, " +
-                        "c.type, " +
-                        "student.username, " +
-                        "student.role)" +
+                            "h.historyId, " +
+                            "h.grp, " +
+                            "h.teacherName, " +
+                            "a.attendanceDate, " +
+                            "h.attendanceImage, " +
+                            "c.name, " +
+                            "c.abbreviation, " +
+                            "c.type, " +
+                            "student.username, " +
+                            "student.role)" +
                     "from History h " +
                             "inner join h.attendances a " +
                             "inner join a.course c " +
                             "inner join a.user student " +
-                    "where h.teacherName=:teacher";
+                    "where h.teacherName=:teacher and h.historyId =:historyId ";
 
-            return session.createQuery(HQL).setParameter("teacher", teacher).getResultList();
+            return session
+                    .createQuery(HQL)
+                    .setParameter("teacher", teacher)
+                    .setParameter("historyId", historyId)
+                    .getResultList();
         }
     }
 
     @Override
     public Optional<History> findHistoryBy(final String teacher, final String group) {
-
         try (final Session session = persistenceUtils.getSessionFactory().openSession()) {
 
             final String HQL =
                     "select new application.model.query.HistoryPart(" +
                             "h.historyId, " +
                             "h.grp, " +
-                            "h.teacherName) " +
-                            "from History h where h.teacherName=:teacher and h.grp=:class";
+                            "h.teacherName, " +
+                            "h.attendanceImage) " +
+                    "from History h where h.teacherName=:teacher and h.grp=:class";
 
             return session
                     .createQuery(HQL)

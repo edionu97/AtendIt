@@ -13,6 +13,13 @@ public interface IHistoryRepo {
      */
     List<History> getAllFor(final String teacher);
 
+
+    /**
+     * Returns a list with all attendace history for teacher with teachername = @param teacher at a specific couse
+     * @param teacher:  theacher's username
+     */
+    List<History> getAllForAt(final String teacher, final int historyId);
+
     /**
      * @param teacher: the teacher name
      * @param group: the group number

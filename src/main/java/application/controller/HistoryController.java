@@ -2,6 +2,7 @@ package application.controller;
 
 import application.messages.ErrorMessage;
 import application.messages.request.GetProfileInfoMessage;
+import application.messages.request.HistoryForAtMessage;
 import application.model.History;
 import application.service.interfaces.IHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,24 @@ public class HistoryController {
         final Map<String, List<History>> history = new HashMap<>();
         history.put(
                 "history", historyService.getAllFor(userMessage.getUsername())
+        );
+
+        return new ResponseEntity<>(history, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/for-at")
+    public ResponseEntity<?> getHistoryForAt(@RequestBody HistoryForAtMessage message){
+
+        if(message.getUsern() == null || message.getId() == 0) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        final Map<String, List<History>> history = new HashMap<>();
+        history.put(
+                "history", historyService.getAllForAt(message.getUsern(), message.getId())
         );
 
         return new ResponseEntity<>(history, HttpStatus.OK);

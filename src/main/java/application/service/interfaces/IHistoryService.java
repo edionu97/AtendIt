@@ -13,6 +13,12 @@ public interface IHistoryService {
     List<History> getAllFor(final String teacher);
 
     /**
+     * Returns a list with all attendace history for teacher with teachername = @param teacher
+     * @param teacher:  theacher's username
+     */
+    List<History> getAllForAt(final String teacher, final int id);
+
+    /**
      * @param teacher: the teacher name
      * @param group: the group number
      * @return: optiona.empty if in database does not exist such an user or optional.of(history) otherwise

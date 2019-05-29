@@ -62,7 +62,6 @@ public class History implements Serializable {
     }
 
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int historyId;
 
@@ -78,7 +77,6 @@ public class History implements Serializable {
     private Set<Attendance> attendances = new HashSet<>();
 
     @Lob
-    @JsonIgnore
     @Column(name="attendanceImage", columnDefinition="LONGBLOB")
     private byte[] attendanceImage;
 }

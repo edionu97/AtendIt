@@ -1,6 +1,7 @@
 package application.model.query;
 
 import application.model.History;
+import application.model.Profile;
 import application.utils.model.ClassType;
 import application.utils.model.UserRoles;
 
@@ -9,6 +10,7 @@ import java.util.Date;
 public class HistoryAttendanceCourseStudentPart extends History {
 
     public HistoryAttendanceCourseStudentPart(
+            final int historyId,
             final String grp,
             final String teacherName,
             final Date attendanceDate,
@@ -20,6 +22,7 @@ public class HistoryAttendanceCourseStudentPart extends History {
             final UserRoles role) {
 
         super(grp, teacherName);
+        super.setHistoryId(historyId);
         this.attendanceDate = attendanceDate;
         this.attendanceImage = attendanceImage;
         this.courseName = courseName;
@@ -85,6 +88,14 @@ public class HistoryAttendanceCourseStudentPart extends History {
         this.role = role;
     }
 
+    public Profile getStudentProfile() {
+        return studentProfile;
+    }
+
+    public void setStudentProfile(Profile studentProfile) {
+        this.studentProfile = studentProfile;
+    }
+
     //from attendance
     private Date attendanceDate;
     private byte[] attendanceImage;
@@ -97,4 +108,6 @@ public class HistoryAttendanceCourseStudentPart extends History {
     //from user
     private String studentName;
     private UserRoles role;
+
+    private Profile studentProfile;
 }
