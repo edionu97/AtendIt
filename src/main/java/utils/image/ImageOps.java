@@ -2,6 +2,7 @@ package utils.image;
 
 import artificial_inteligence.utils.xmls.BndBox;
 import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacv.FrameFilter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -15,6 +16,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.bytedeco.javacpp.opencv_imgproc.putText;
@@ -48,14 +53,14 @@ public class ImageOps {
         }
     }
 
-    public static Mat cropImage(final Mat mat, final Rect rect){
+    public static Mat cropImage(final Mat mat, final Rect rect) {
 
-        rect.height = (int)Math.min(
+        rect.height = (int) Math.min(
                 rect.height,
                 mat.size().height - rect.y
         );
 
-        rect.width = (int)Math.min(
+        rect.width = (int) Math.min(
                 rect.width,
                 mat.size().width - rect.x
         );
@@ -74,8 +79,8 @@ public class ImageOps {
         return img;
     }
 
-    public static Mat getMatrixFromBytes(final byte[] bytes){
-        return  Imgcodecs.imdecode(
+    public static Mat getMatrixFromBytes(final byte[] bytes) {
+        return Imgcodecs.imdecode(
                 new MatOfByte(bytes), Imgcodecs.CV_LOAD_IMAGE_UNCHANGED
         );
     }
@@ -95,7 +100,7 @@ public class ImageOps {
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public  static  void displayImage(final opencv_core.Mat image){
+    public static void displayImage(final opencv_core.Mat image) {
 
         OpenCVFrameConverter.ToMat converter1 = new OpenCVFrameConverter.ToMat();
         OpenCVFrameConverter.ToOrgOpenCvCoreMat converter2 = new OpenCVFrameConverter.ToOrgOpenCvCoreMat();
@@ -103,7 +108,7 @@ public class ImageOps {
         displayImage(converter2.convert(converter1.convert(image)));
     }
 
-    public static opencv_core.Mat toCoreMat(final Mat mat){
+    public static opencv_core.Mat toCoreMat(final Mat mat) {
 
         OpenCVFrameConverter.ToMat converter1 = new OpenCVFrameConverter.ToMat();
         OpenCVFrameConverter.ToOrgOpenCvCoreMat converter2 = new OpenCVFrameConverter.ToOrgOpenCvCoreMat();
@@ -111,7 +116,7 @@ public class ImageOps {
         return converter1.convert(converter2.convert(mat));
     }
 
-    public  static Mat toMat(final opencv_core.Mat mat){
+    public static Mat toMat(final opencv_core.Mat mat) {
 
         OpenCVFrameConverter.ToMat converter1 = new OpenCVFrameConverter.ToMat();
         OpenCVFrameConverter.ToOrgOpenCvCoreMat converter2 = new OpenCVFrameConverter.ToOrgOpenCvCoreMat();
@@ -140,17 +145,38 @@ public class ImageOps {
         return image;
     }
 
+    public static byte[] convertMat2Bytes(final Mat mat) {
+        try {
+            final File file = Files.createTempFile("Image-", ".jpg").toFile();
 
-    public static byte[] convertMat2ByteArray(final Mat mat){
-        final byte[] bytes = new byte[(int)(mat.total() * mat.channels())];
-        mat.get(0,0, bytes);
+            Imgcodecs.imwrite(file.getAbsolutePath(), mat);
+
+            final byte[] imageBytes = new byte[(int) file.length()];
+
+            new FileInputStream(file).read(imageBytes);
+
+            if (file.delete()) {
+                System.out.println(
+                        String.format("File %s deleted", file.getPath())
+                );
+            }
+
+            return imageBytes;
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public static byte[] convertMat2ByteArray(final Mat mat) {
+        final byte[] bytes = new byte[(int) (mat.total() * mat.channels())];
+        mat.get(0, 0, bytes);
         return bytes;
     }
 
 
-    public static Mat bytes2Mat(final byte[] bytes, final int height, final int width, final int type){
+    public static Mat bytes2Mat(final byte[] bytes, final int height, final int width, final int type) {
         final Mat mat = new Mat(height, width, type);
-        mat.put(0,0, bytes);
+        mat.put(0, 0, bytes);
         return mat;
     }
 }
