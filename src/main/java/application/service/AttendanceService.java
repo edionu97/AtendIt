@@ -10,9 +10,7 @@ import application.service.utils.PushNotification;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.image_processing.VideoProcessor;
 import application.utils.model.ClassType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bytedeco.javacpp.opencv_core;
-import org.opencv.core.Mat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -35,14 +33,14 @@ public class AttendanceService implements IAttendanceService {
     @Autowired
     public AttendanceService(
             final IUserRepo userRepo,
-            final IHistoryRepo historyRepo,
             final ICourseService courseService,
             final IAttendanceRepo attendanceRepo,
             final IEnrollmentService enrollmentService,
             final IProfileService profileService,
+            final IHistoryService historyService,
             final IRecognitionService recognitionService) {
         this.userRepo = userRepo;
-        this.historyRepo = historyRepo;
+        this.historyService = historyService;
         this.courseService = courseService;
         this.attendanceRepo = attendanceRepo;
         this.enrollmentService = enrollmentService;
@@ -89,7 +87,7 @@ public class AttendanceService implements IAttendanceService {
             );
         }
 
-        final Optional<History> optionalHistory = historyRepo.findHistoryBy(teacherName, group);
+        final Optional<History> optionalHistory = historyService.findHistoryBy(teacherName, group);
 
         History history = new History(group, teacherName);
         if (optionalHistory.isPresent()) {
@@ -222,7 +220,7 @@ public class AttendanceService implements IAttendanceService {
     }
 
     private IUserRepo userRepo;
-    private IHistoryRepo historyRepo;
+    private IHistoryService historyService;
     private ICourseService courseService;
     private IAttendanceRepo attendanceRepo;
     private IProfileService profileService;
