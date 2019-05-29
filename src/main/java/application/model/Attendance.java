@@ -19,16 +19,10 @@ public class Attendance implements Serializable {
     public Attendance(
             final User user,
             final Course course,
-            final History history,
-            final byte[] image,
-            final int height, final int width, final  int type) {
+            final History history) {
         this.user = user;
         this.course = course;
         this.history = history;
-        this.attendanceImage = image;
-        this.height = height;
-        this.width = width;
-        this.type =  type;
     }
 
     @Override
@@ -67,10 +61,6 @@ public class Attendance implements Serializable {
         return history;
     }
 
-    public byte[] getAttendanceImage() {
-        return attendanceImage;
-    }
-
     public void setUser(User user) {
         this.user = user;
     }
@@ -89,10 +79,6 @@ public class Attendance implements Serializable {
 
     public void setHistory(final History history) {
         this.history = history;
-    }
-
-    public void setAttendanceImage(final byte[] attendanceImage) {
-        this.attendanceImage = attendanceImage;
     }
 
     @Id
@@ -120,21 +106,4 @@ public class Attendance implements Serializable {
     @JoinColumn(name = "historyId")
     @Fetch(FetchMode.JOIN)
     private History history;
-
-    @Lob
-    @JsonIgnore
-    @Column(name="attendanceImage", columnDefinition="LONGBLOB")
-    private byte[] attendanceImage;
-
-    @Column
-    @JsonIgnore
-    private int height;
-
-    @Column
-    @JsonIgnore
-    private int width;
-
-    @Column
-    @JsonIgnore
-    private int type;
 }

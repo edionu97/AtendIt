@@ -2,6 +2,7 @@ package application.service.interfaces;
 
 
 import application.model.Attendance;
+import application.model.History;
 import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 import org.bytedeco.javacpp.opencv_core;
@@ -26,7 +27,8 @@ public interface IAttendanceService {
             final ClassType type,
             final String teacherName,
             final String group,
-            final opencv_core.Mat frame) throws ErrorMessageException;
+            final opencv_core.Mat frame,
+            final History history) throws ErrorMessageException;
 
     /**
      * Returns true if user has a list with face images and false contrary

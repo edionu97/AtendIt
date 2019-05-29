@@ -98,40 +98,19 @@ public class StudentAttendanceController {
     }
 
     @PostMapping(value = "/delete")
-    public ResponseEntity<?> deleteAttendance(@RequestBody DeleteAttendanceMessage message){
+    public ResponseEntity<?> deleteAttendance(@RequestBody DeleteAttendanceMessage message) {
 
-        if(message.getAttendanceId() <= 0){
+        if (message.getAttendanceId() <= 0) {
             return new ResponseEntity<>(
                     new ErrorMessage(HttpStatus.BAD_REQUEST, "Id must be positive"),
                     HttpStatus.BAD_REQUEST
             );
         }
 
-        try{
+        try {
 
             attendanceService.delete(message.getAttendanceId());
-        }catch (ErrorMessageException ex){
-            return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/add")
-    public ResponseEntity<?> addAttendance(@RequestBody GetAttendancesForAtMessage message){
-
-        if (message.getTeacherName() == null || message.getCourseName() == null || message.getStudentName() == null || message.getType() == null) {
-            return new ResponseEntity<>(
-                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-
-        try{
-            attendanceService.addAttendance(
-                    message.getStudentName(), message.getCourseName(), message.getType(), message.getTeacherName(), "TEST", null
-            );
-        }catch (ErrorMessageException ex){
+        } catch (ErrorMessageException ex) {
             return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());
         }
 

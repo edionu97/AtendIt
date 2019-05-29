@@ -20,10 +20,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                         "h.grp, " +
                         "h.teacherName, " +
                         "a.attendanceDate, " +
-                        "a.attendanceImage, " +
-                        "a.height, " +
-                        "a.width, " +
-                        "a.type," +
+                        "h.attendanceImage, " +
                         "c.name, " +
                         "c.abbreviation, " +
                         "c.type, " +

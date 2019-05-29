@@ -13,9 +13,6 @@ public class HistoryAttendanceCourseStudentPart extends History {
             final String teacherName,
             final Date attendanceDate,
             final byte[] attendanceImage,
-            final int height,
-            final int width,
-            final int type,
             final String courseName,
             final String courseAbr,
             final ClassType courseType,
@@ -25,9 +22,6 @@ public class HistoryAttendanceCourseStudentPart extends History {
         super(grp, teacherName);
         this.attendanceDate = attendanceDate;
         this.attendanceImage = attendanceImage;
-        this.width = width;
-        this.height = height;
-        this.type = type;
         this.courseName = courseName;
         this.courseType = courseType;
         this.courseAbr = courseAbr;
@@ -94,9 +88,6 @@ public class HistoryAttendanceCourseStudentPart extends History {
     //from attendance
     private Date attendanceDate;
     private byte[] attendanceImage;
-    private int height;
-    private int width;
-    private int type;
 
     //from course
     private String courseName;

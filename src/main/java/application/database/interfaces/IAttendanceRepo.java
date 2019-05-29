@@ -22,9 +22,7 @@ public interface IAttendanceRepo {
     void addAttendance(
             final User student,
             final Course course,
-            final History history,
-            final byte[] image,
-            final int height, final int width, final int type) throws ErrorMessageException;
+            final History history) throws ErrorMessageException;
 
     /**
      * Update the attendance

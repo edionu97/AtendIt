@@ -40,6 +40,10 @@ public class History implements Serializable {
         return attendances;
     }
 
+    public byte[] getAttendanceImage() {
+        return attendanceImage;
+    }
+
     public void setHistoryId(int historyId) {
         this.historyId = historyId;
     }
@@ -51,6 +55,10 @@ public class History implements Serializable {
     public void setAttendances(final Set<Attendance> attendances) {
         attendances.forEach(attendance -> attendance.setHistory(this));
         this.attendances = attendances;
+    }
+
+    public void setAttendanceImage(final byte[] attendanceImage) {
+        this.attendanceImage = attendanceImage;
     }
 
     @Id
@@ -68,4 +76,9 @@ public class History implements Serializable {
     @OneToMany(mappedBy = "history", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
     private Set<Attendance> attendances = new HashSet<>();
+
+    @Lob
+    @JsonIgnore
+    @Column(name="attendanceImage", columnDefinition="LONGBLOB")
+    private byte[] attendanceImage;
 }

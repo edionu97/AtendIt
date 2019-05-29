@@ -62,7 +62,7 @@ public class AttendanceService implements IAttendanceService {
             final String studentName,
             final String courseName,
             final ClassType type,
-            final String teacherName, final String group, final opencv_core.Mat frame) throws ErrorMessageException {
+            final String teacherName, final String group, final opencv_core.Mat frame, final History history) throws ErrorMessageException {
 
         final Optional<Course> courseOptional = courseService.findCourseBy(
                 teacherName, courseName, type
@@ -91,24 +91,10 @@ public class AttendanceService implements IAttendanceService {
             );
         }
 
-        final Optional<History> optionalHistory = historyService.findHistoryBy(teacherName, group);
-
-        History history = new History(group, teacherName);
-        if (optionalHistory.isPresent()) {
-            history = optionalHistory.get();
-        }
-
-        final byte[] imageBytes = ImageOps.convertMat2Bytes(
-                ImageOps.toMat(frame)
-        );
-
         attendanceRepo.addAttendance(
                 studentOptional.get(),
                 courseOptional.get(),
-                history, imageBytes,
-                frame.size().height(),
-                frame.size().width(),
-                frame.type()
+                history
         );
     }
 
@@ -186,12 +172,17 @@ public class AttendanceService implements IAttendanceService {
             final List<String> labels = recognitionService
                     .getIdentifiedLables(attendanceVideo, .4);
 
+            final History history = new History(attendanceClass, teacherName);
+            history.setAttendanceImage(
+                    ImageOps.convertMat2Bytes(ImageOps.toMat(images.get(0)))
+            );
+
             System.out.println(recognitionService.getRecognitionConfidence());
             //iterate through all identified labels
             labels.forEach(studentUsername -> {
                 try {
                     addAttendance(
-                            studentUsername, courseName, courseType, teacherName, attendanceClass, images.get(0)
+                            studentUsername, courseName, courseType, teacherName, attendanceClass, images.get(0), history
                     );
                     //send notification to client
                     WebSocketConfig.TopicHandler.pushMessage(
