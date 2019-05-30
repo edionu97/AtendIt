@@ -24,7 +24,24 @@ public class VideoProcessor {
         final File file = Files.createTempFile("Video-", ".mp4").toFile();
 
         _writeToFile(file, image);
-        _addFrames(file);
+        _addFrames(file, true);
+
+        if(file.delete()){
+            System.out.println(
+                    String.format("File %s deleted", file.getPath())
+            );
+        }
+
+        return images;
+    }
+
+
+    public List<opencv_core.Mat> getImagesNotResized(final byte[] image) throws  Exception{
+
+        final File file = Files.createTempFile("Video-", ".mp4").toFile();
+
+        _writeToFile(file, image);
+        _addFrames(file, false);
 
         if(file.delete()){
             System.out.println(
@@ -44,7 +61,7 @@ public class VideoProcessor {
         }
     }
 
-    private void _addFrames(final File file){
+    private void _addFrames(final File file, final boolean shouldResize){
 
         VideoCapture videoCapture = new VideoCapture(file.getPath());
 
@@ -54,12 +71,11 @@ public class VideoProcessor {
         while (videoCapture.read(mat)){
 
             final opencv_core.Mat resizedCopy = new opencv_core.Mat();
-
             // could create memory-leaks
             opencv_imgproc.resize(
                     ImageOps.toCoreMat(mat),
                     resizedCopy,
-                    size
+                    shouldResize ? size : new opencv_core.Size(mat.height(), mat.width())
             );
 
             images.add(
