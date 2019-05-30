@@ -27,7 +27,6 @@ public interface IAttendanceService {
             final ClassType type,
             final String teacherName,
             final String group,
-            final opencv_core.Mat frame,
             final History history) throws ErrorMessageException;
 
     /**

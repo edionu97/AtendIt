@@ -62,7 +62,7 @@ public class AttendanceService implements IAttendanceService {
             final String studentName,
             final String courseName,
             final ClassType type,
-            final String teacherName, final String group, final opencv_core.Mat frame, final History history) throws ErrorMessageException {
+            final String teacherName, final String group, final History history) throws ErrorMessageException {
 
         final Optional<Course> courseOptional = courseService.findCourseBy(
                 teacherName, courseName, type
@@ -182,7 +182,7 @@ public class AttendanceService implements IAttendanceService {
             labels.forEach(studentUsername -> {
                 try {
                     addAttendance(
-                            studentUsername, courseName, courseType, teacherName, attendanceClass, images.get(0), history
+                            studentUsername, courseName, courseType, teacherName, attendanceClass, history
                     );
                     //send notification to client
                     WebSocketConfig.TopicHandler.pushMessage(
@@ -209,7 +209,7 @@ public class AttendanceService implements IAttendanceService {
         //retrive the frames
         List<opencv_core.Mat> images = null;
         try {
-            images = videoProcessor.getImages(video);
+            images = videoProcessor.getImagesNotResized(video);
         } catch (Exception e) {
             e.printStackTrace();
         }
