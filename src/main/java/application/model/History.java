@@ -73,7 +73,6 @@ public class History implements Serializable {
 
     @JsonIgnore
     @OneToMany(mappedBy = "history", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Fetch(FetchMode.JOIN)
     private Set<Attendance> attendances = new HashSet<>();
 
     @Lob

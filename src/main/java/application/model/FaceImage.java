@@ -76,9 +76,8 @@ public class FaceImage implements Serializable {
     @Column(name="image", columnDefinition="LONGBLOB")
     private byte[] image;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faceId")
-    @Fetch(FetchMode.JOIN)
     private Face face;
 
     @Column

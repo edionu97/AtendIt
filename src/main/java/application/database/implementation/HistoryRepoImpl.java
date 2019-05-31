@@ -7,11 +7,34 @@ import application.model.User;
 import application.utils.model.ClassType;
 import org.hibernate.Session;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHistoryRepo {
+
+    @Override
+    public Optional<History> findHisoryById(int historyId) {
+        try (final Session session = persistenceUtils.getSessionFactory().openSession()) {
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<History> query = builder.createQuery(History.class);
+            Root<History> table = query.from(History.class);
+
+            query.select(table).where(
+                    builder.equal(
+                            table.get("historyId"),
+                            historyId
+                    )
+            );
+
+            return session.createQuery(query).getResultList().stream().findFirst();
+        }
+    }
+
     @Override
     public List<History> getAllFor(final String teacher) {
 
@@ -23,7 +46,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "h.grp, " +
                             "h.teacherName, " +
                             "h.attendanceImage) " +
-                    "from History h";
+                            "from History h";
 
             return session.createQuery(HQL).getResultList();
         }
@@ -46,11 +69,11 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "c.type, " +
                             "student.username, " +
                             "student.role)" +
-                    "from History h " +
+                            "from History h " +
                             "inner join h.attendances a " +
                             "inner join a.course c " +
                             "inner join a.user student " +
-                    "where h.teacherName=:teacher and h.historyId =:historyId ";
+                            "where h.teacherName=:teacher and h.historyId =:historyId ";
 
             return session
                     .createQuery(HQL)
@@ -70,7 +93,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "h.grp, " +
                             "h.teacherName, " +
                             "h.attendanceImage) " +
-                    "from History h where h.teacherName=:teacher and h.grp=:class";
+                            "from History h where h.teacherName=:teacher and h.grp=:class";
 
             return session
                     .createQuery(HQL)
@@ -97,7 +120,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "inner join e.course c " +
                             "inner join e.user student " +
                             "inner join c.user teacher " +
-                    "where c.name =:courseName and c.type=:courseType and teacher.username=:teacherName and e.group=:grupa";
+                            "where c.name =:courseName and c.type=:courseType and teacher.username=:teacherName and e.group=:grupa";
             final List<User> absents = session
                     .createQuery(HQL)
                     .setParameter("courseType", courseType)
@@ -109,7 +132,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
             final String HQL2 =
                     "select a.user.userId from History h " +
                             "inner join h.attendances a " +
-                    "where a.history.historyId = :historyId";
+                            "where a.history.historyId = :historyId";
             final List<Integer> presentStudents = session
                     .createQuery(HQL2)
                     .setParameter("historyId", historyId)

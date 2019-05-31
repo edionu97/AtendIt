@@ -28,6 +28,11 @@ public class HistoryService implements IHistoryService {
     }
 
     @Override
+    public Optional<History> findById(int historyId) {
+        return historyRepo.findHisoryById(historyId);
+    }
+
+    @Override
     public List<History> getAllFor(String teacher) {
         return historyRepo.getAllFor(teacher);
     }

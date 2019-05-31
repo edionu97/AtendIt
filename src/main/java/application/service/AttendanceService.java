@@ -37,6 +37,7 @@ public class AttendanceService implements IAttendanceService {
     @Autowired
     public AttendanceService(
             final IUserRepo userRepo,
+            final IHistoryRepo historyRepo,
             final ICourseService courseService,
             final IAttendanceRepo attendanceRepo,
             final IEnrollmentService enrollmentService,
@@ -44,6 +45,7 @@ public class AttendanceService implements IAttendanceService {
             final IHistoryService historyService,
             final IRecognitionService recognitionService) {
         this.userRepo = userRepo;
+        this.historyRepo = historyRepo;
         this.historyService = historyService;
         this.courseService = courseService;
         this.attendanceRepo = attendanceRepo;
@@ -62,7 +64,7 @@ public class AttendanceService implements IAttendanceService {
             final String studentName,
             final String courseName,
             final ClassType type,
-            final String teacherName, final String group, final History history) throws ErrorMessageException {
+            final String teacherName, final History history) throws ErrorMessageException {
 
         final Optional<Course> courseOptional = courseService.findCourseBy(
                 teacherName, courseName, type
@@ -95,6 +97,65 @@ public class AttendanceService implements IAttendanceService {
                 studentOptional.get(),
                 courseOptional.get(),
                 history
+        );
+    }
+
+    @Override
+    public void modifyAttendance(
+            final String courseName,
+            final ClassType type,
+            final String teacherName,
+            final int historyId,
+            final List<String> presentsUsername) throws ErrorMessageException {
+
+        //get the history
+        final  Optional<History> historyOptional = historyService.findById(historyId);
+        if(!historyOptional.isPresent()){
+            throw  new ErrorMessageException(
+                   "In database does not exist such a history",
+                    HttpStatus.NOT_FOUND
+            );
+        }
+        final History history = historyOptional.get();
+
+        //delete all the attendances from that specific history
+        history.getAttendances().forEach(attendance -> {
+            try{
+                attendance.setHistory(null);
+                attendanceRepo.update(attendance);
+                attendanceRepo.delete(attendance);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+            //send notification to client
+            WebSocketConfig.TopicHandler.pushMessage(
+                    attendance.getUser().getUsername(),
+                    PushNotification.toJson(new PushNotification("update-attendances"))
+            );
+        });
+
+        history.setAttendances(new HashSet<>());
+        historyRepo.update(history);
+
+        presentsUsername.forEach(studentUsername -> {
+            try {
+                addAttendance(
+                        studentUsername, courseName, type, teacherName, history
+                );
+                //send notification to client
+                WebSocketConfig.TopicHandler.pushMessage(
+                        studentUsername,
+                        PushNotification.toJson(new PushNotification("update-attendances"))
+                );
+            } catch (ErrorMessageException e) {
+                e.printStackTrace();
+            }
+        });
+        //send notification to client
+        WebSocketConfig.TopicHandler.pushMessage(
+                teacherName,
+                PushNotification.toJson(new PushNotification("update-attendances"))
         );
     }
 
@@ -182,7 +243,7 @@ public class AttendanceService implements IAttendanceService {
             labels.forEach(studentUsername -> {
                 try {
                     addAttendance(
-                            studentUsername, courseName, courseType, teacherName, attendanceClass, history
+                            studentUsername, courseName, courseType, teacherName, history
                     );
                     //send notification to client
                     WebSocketConfig.TopicHandler.pushMessage(
@@ -218,6 +279,7 @@ public class AttendanceService implements IAttendanceService {
     }
 
     private IUserRepo userRepo;
+    private IHistoryRepo historyRepo;
     private IHistoryService historyService;
     private ICourseService courseService;
     private IAttendanceRepo attendanceRepo;

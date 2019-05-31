@@ -54,11 +54,9 @@ public class Face implements Serializable {
 
     @JsonIgnore
     @JoinColumn(name = "userId")
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Fetch(FetchMode.JOIN)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
-    @OneToMany(mappedBy = "face", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Fetch(FetchMode.JOIN)
+    @OneToMany(mappedBy = "face", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FaceImage> faces = new ArrayList<>();
 }

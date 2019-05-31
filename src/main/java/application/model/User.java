@@ -164,9 +164,8 @@ public class User implements Serializable {
     @Fetch(FetchMode.JOIN)
     private Profile profile;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-    @Fetch(FetchMode.JOIN)
     private Face face;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

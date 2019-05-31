@@ -117,6 +117,27 @@ public class StudentAttendanceController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping(value = "/modify")
+    public ResponseEntity<?> modifyAttendance(@RequestBody ModifyAttendance message) {
+
+        if (message.getHistoryId() <= 0 || message.getCourseName() == null || message.getPresents() == null || message.getTeacherName() == null || message.getType() == null) {
+            return new ResponseEntity<>(
+                    new ErrorMessage(HttpStatus.BAD_REQUEST, "Required field missing"),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        try {
+            attendanceService.modifyAttendance(
+                message.getCourseName(), message.getType(), message.getTeacherName(), message.getHistoryId(), message.getPresents()
+            );
+        } catch (ErrorMessageException ex) {
+            return new ResponseEntity<>(ex.getErrorMessage(), ex.getErrorMessage().getCode());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     private IAttendanceService attendanceService;
     private ICourseService courseService;

@@ -104,6 +104,5 @@ public class Attendance implements Serializable {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "historyId")
-    @Fetch(FetchMode.JOIN)
     private History history;
 }

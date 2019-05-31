@@ -2,6 +2,7 @@ package application.database.interfaces;
 
 import application.model.History;
 import application.model.User;
+import application.utils.exceptions.ErrorMessageException;
 import application.utils.model.ClassType;
 
 import java.util.List;
@@ -10,11 +11,23 @@ import java.util.Optional;
 public interface IHistoryRepo {
 
     /**
+     *
+     * @param historyId: int the history's id
+     * @return
+     */
+    Optional<History> findHisoryById(final int historyId);
+
+    /**
      * Returns a list with all attendace history for teacher with teachername = @param teacher
      * @param teacher:  theacher's username
      */
     List<History> getAllFor(final String teacher);
 
+    /**
+     * Update the user info
+     * @param user: the user that will be updated
+     */
+    void update(final History history) throws ErrorMessageException;
 
     /**
      * Returns a list with all attendace history for teacher with teachername = @param teacher at a specific couse

@@ -8,6 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IHistoryService {
+
+    /**
+     * Returns an optional of history if in database exists an record with
+     * historyId = @param historyIf
+     * @param historyId: the history's id
+     * @return: optional.empty() or optional.of(history)
+     */
+    Optional<History> findById(final int historyId);
+
     /**
      * Returns a list with all attendace history for teacher with teachername = @param teacher
      * @param teacher:  theacher's username

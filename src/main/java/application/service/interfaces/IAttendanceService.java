@@ -26,8 +26,23 @@ public interface IAttendanceService {
             final String courseName,
             final ClassType type,
             final String teacherName,
-            final String group,
             final History history) throws ErrorMessageException;
+
+    /**
+     *
+     * @param courseName: the name of the course
+     * @param type: the course type
+     * @param teacherName: the name of the teacher
+     * @param historyId: historyId
+     * @param presentsUsername: list representing the new present users
+     * @throws ErrorMessageException
+     */
+    void modifyAttendance(
+            final String courseName,
+            final ClassType type,
+            final String teacherName,
+            final int historyId,
+            final List<String> presentsUsername) throws ErrorMessageException;
 
     /**
      * Returns true if user has a list with face images and false contrary
@@ -79,5 +94,5 @@ public interface IAttendanceService {
             final String username, final String courseName, final ClassType type, final String teacherName);
 
     void automaticAttendance(
-            final byte[] attendanceVideo, final String teacherName, final String attendanceClass, final String courseName, final ClassType courseType) throws  ErrorMessageException;
+            final byte[] attendanceVideo, final String teacherName, final String attendanceClass, final String courseName, final ClassType courseType) throws ErrorMessageException;
 }
