@@ -72,7 +72,7 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "from History h " +
                             "inner join h.attendances a " +
                             "inner join a.course c " +
-                            "inner join a.user student " +
+                            "left join a.user student " +
                             "where h.teacherName=:teacher and h.historyId =:historyId ";
 
             return session
@@ -140,7 +140,12 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
 
             //remove present users
             presentStudents.forEach(x -> {
-                absents.removeIf(y -> y.getUserId() == x);
+                absents.removeIf(y -> {
+                    if (x == null) {
+                        return false;
+                    }
+                    return y.getUserId() == x;
+                });
             });
 
             return absents;

@@ -72,12 +72,6 @@ public class AttendanceService implements IAttendanceService {
 
         final Optional<User> studentOptional = userRepo.findUserByUsername(studentName);
 
-        if (!studentOptional.isPresent()) {
-            throw new ErrorMessageException(
-                    String.format("User with username: %s not found", studentName), HttpStatus.NOT_FOUND
-            );
-        }
-
         if (!courseOptional.isPresent()) {
             throw new ErrorMessageException(
                     String.format("Course (%s, %s, %s) not found", teacherName, courseName, type),
@@ -85,8 +79,7 @@ public class AttendanceService implements IAttendanceService {
             );
         }
 
-
-        if (!enrollmentService.isEnrolledAtCourse(studentName, courseName, type, teacherName)) {
+        if (studentName != null && !enrollmentService.isEnrolledAtCourse(studentName, courseName, type, teacherName)) {
             throw new ErrorMessageException(
                     String.format("Student %s must enroll first at course (%s, %s, %s)", studentName, teacherName, courseName, type),
                     HttpStatus.FORBIDDEN
@@ -94,7 +87,7 @@ public class AttendanceService implements IAttendanceService {
         }
 
         attendanceRepo.addAttendance(
-                studentOptional.get(),
+                studentOptional.orElse(null),
                 courseOptional.get(),
                 history
         );
@@ -109,10 +102,10 @@ public class AttendanceService implements IAttendanceService {
             final List<String> presentsUsername) throws ErrorMessageException {
 
         //get the history
-        final  Optional<History> historyOptional = historyService.findById(historyId);
-        if(!historyOptional.isPresent()){
-            throw  new ErrorMessageException(
-                   "In database does not exist such a history",
+        final Optional<History> historyOptional = historyService.findById(historyId);
+        if (!historyOptional.isPresent()) {
+            throw new ErrorMessageException(
+                    "In database does not exist such a history",
                     HttpStatus.NOT_FOUND
             );
         }
@@ -120,14 +113,17 @@ public class AttendanceService implements IAttendanceService {
 
         //delete all the attendances from that specific history
         history.getAttendances().forEach(attendance -> {
-            try{
+            try {
                 attendance.setHistory(null);
                 attendanceRepo.update(attendance);
                 attendanceRepo.delete(attendance);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
+            if (attendance.getUser() == null) {
+                return;
+            }
             //send notification to client
             WebSocketConfig.TopicHandler.pushMessage(
                     attendance.getUser().getUsername(),
@@ -137,6 +133,12 @@ public class AttendanceService implements IAttendanceService {
 
         history.setAttendances(new HashSet<>());
         historyRepo.update(history);
+
+        if(presentsUsername.isEmpty()){
+            addAttendance(
+                    null, courseName, type, teacherName, history
+            );
+        }
 
         presentsUsername.forEach(studentUsername -> {
             try {
@@ -254,6 +256,17 @@ public class AttendanceService implements IAttendanceService {
                     e.printStackTrace();
                 }
             });
+
+            if (labels.isEmpty()) {
+                try {
+                    addAttendance(
+                            null, courseName, courseType, teacherName, history
+                    );
+                } catch (ErrorMessageException e) {
+                    e.printStackTrace();
+                }
+            }
+
             //send notification to teacher
             WebSocketConfig.TopicHandler.pushMessage(
                     teacherName,
