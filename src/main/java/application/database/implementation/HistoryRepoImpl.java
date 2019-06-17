@@ -46,9 +46,10 @@ public class HistoryRepoImpl extends AbstractRepoImpl<History> implements IHisto
                             "h.grp, " +
                             "h.teacherName, " +
                             "h.attendanceImage) " +
-                            "from History h";
+                            "from History h " +
+                    "where h.teacherName =:teacher";
 
-            return session.createQuery(HQL).getResultList();
+            return session.createQuery(HQL).setParameter("teacher", teacher).getResultList();
         }
     }
 

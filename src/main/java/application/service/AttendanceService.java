@@ -79,13 +79,6 @@ public class AttendanceService implements IAttendanceService {
             );
         }
 
-        if (studentName != null && !enrollmentService.isEnrolledAtCourse(studentName, courseName, type, teacherName)) {
-            throw new ErrorMessageException(
-                    String.format("Student %s must enroll first at course (%s, %s, %s)", studentName, teacherName, courseName, type),
-                    HttpStatus.FORBIDDEN
-            );
-        }
-
         attendanceRepo.addAttendance(
                 studentOptional.orElse(null),
                 courseOptional.get(),

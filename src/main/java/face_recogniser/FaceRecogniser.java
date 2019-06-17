@@ -27,16 +27,19 @@ public class FaceRecogniser {
 
         //reinitialize the map
         frameFrequcency = new TreeMap<>();
+        frameNo = 0;
 
         //get frames from video
         final List<opencv_core.Mat> images = _getFramesFromVideo(videoFrames);
 
-        //get number of frames
-        frameNo = images.size();
-
         //loop through all frames
         for(final opencv_core.Mat image : images) {
             final List<Mat> faces = cropper.getDetectedObjects(image, .4);
+
+            if(!faces.isEmpty()){
+                ++frameNo;
+            }
+
             _processFrame(faces);
             faces.forEach(Mat::release);
         }
